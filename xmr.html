@@ -17,23 +17,23 @@
     --danger:#ff4d6a;--success:#2dd4a0;
     --unpl:#ff5c5c;--lnpl:#2dd4a0;--avg:#f5b731;
     --url-c:#ff5c5c;--lrl-c:#2dd4a0;--avgmr:#a78bfa;
-    --sig-strong:#ff4d6a;--sig-mod:#ff9f43;--sig-weak:#f5b731;
+    --sig-strong:#ff4d6a;--sig-mod:#ff9f43;--sig-weak:#34d399;
     --r:12px;
   }
   body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-height:100vh}
   .noise{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.03;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
   .wrap{position:relative;z-index:1;max-width:1340px;margin:0 auto;padding:32px 22px 56px}
- 
+
   header{margin-bottom:28px}
   header h1{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:800;letter-spacing:-.5px;background:linear-gradient(135deg,#dfe2f0 30%,#5b7fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
   header .sub{color:var(--dim);font-size:.82rem;font-weight:300;margin-top:3px}
- 
+
   .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:9px;margin-bottom:22px}
   .kpi{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:14px 13px;overflow:hidden}
   .kpi-label{font-size:.6rem;text-transform:uppercase;letter-spacing:1.4px;color:var(--dim);margin-bottom:4px}
   .kpi-val{font-size:1.45rem;font-weight:700;line-height:1}
   .kpi-unit{font-size:.65rem;color:var(--mut);margin-top:2px}
- 
+
   .toolbar{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
   .toolbar .group{display:flex;gap:3px}
   .toolbar .spacer{flex:1;min-width:10px}
@@ -42,24 +42,24 @@
   .btn.active{background:var(--acc);color:#fff;border-color:var(--acc)}
   .btn.danger{border-color:var(--danger);color:var(--danger)}.btn.danger:hover{background:var(--danger);color:#fff}
   .btn.success{border-color:var(--success);color:var(--success)}.btn.success:hover{background:var(--success);color:#fff}
- 
+
   .card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:20px 18px 14px;margin-bottom:16px}
   .card-title{font-size:.95rem;font-weight:700;margin-bottom:1px}
   .card-sub{font-size:.72rem;color:var(--dim);font-weight:300;margin-bottom:14px}
   .chart-wrap{position:relative;width:100%;height:340px}
   canvas{display:block}
- 
+
   .legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px solid var(--bd)}
   .legend-item{display:flex;align-items:center;gap:5px;font-size:.7rem;color:var(--dim)}
   .lg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
   .lg-line{width:18px;height:0;flex-shrink:0;border-top:2px dashed}
   .lg-solid{width:18px;height:0;flex-shrink:0;border-top:2px solid}
- 
+
   .tooltip{position:absolute;display:none;background:#1a1f2f;border:1px solid var(--bdl);border-radius:10px;padding:10px 14px;font-size:.74rem;pointer-events:none;z-index:10;box-shadow:0 10px 36px rgba(0,0,0,.5);min-width:150px}
   .tt-date{color:var(--dim);font-size:.64rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px}
   .tt-val{font-size:1.15rem;font-weight:700}
   .tt-meta{margin-top:2px;font-size:.7rem}
- 
+
   .panel{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:20px;margin-bottom:16px;display:none}
   .panel.open{display:block}
   .panel h3{font-size:.88rem;font-weight:700;margin-bottom:10px}
@@ -68,7 +68,7 @@
   .field label{font-size:.62rem;text-transform:uppercase;letter-spacing:1px;color:var(--dim)}
   .field input,.field select{background:var(--sf2);border:1px solid var(--bd);color:var(--tx);padding:6px 10px;border-radius:7px;font:inherit;font-size:.78rem;outline:none;min-width:105px}
   .field input:focus,.field select:focus{border-color:var(--acc)}
- 
+
   .tbl-wrap{max-height:280px;overflow-y:auto;border:1px solid var(--bd);border-radius:var(--r)}
   .tbl-wrap::-webkit-scrollbar{width:5px}.tbl-wrap::-webkit-scrollbar-thumb{background:var(--bd);border-radius:3px}
   table{width:100%;border-collapse:collapse;font-size:.78rem}
@@ -78,26 +78,26 @@
   .badge{display:inline-block;padding:1px 7px;border-radius:4px;font-size:.68rem;font-weight:700}
   .badge-S{background:rgba(45,212,160,.12);color:var(--s)}.badge-M{background:rgba(245,183,49,.12);color:var(--m)}.badge-L{background:rgba(232,83,122,.12);color:var(--l)}
   .del-btn{background:none;border:none;color:var(--mut);cursor:pointer;font-size:.9rem;padding:2px 4px;border-radius:3px;transition:all .15s}.del-btn:hover{color:var(--danger);background:rgba(255,77,106,.1)}
- 
+
   .forecast-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:9px}
   .fc-card{background:var(--sf2);border:1px solid var(--bd);border-radius:10px;padding:13px}
   .fc-size{font-size:.68rem;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:6px}
   .fc-row{display:flex;justify-content:space-between;font-size:.74rem;padding:2px 0}
   .fc-label{color:var(--dim)}.fc-val{font-weight:700}
- 
+
   .drop-zone{border:2px dashed var(--bdl);border-radius:10px;padding:24px 16px;text-align:center;color:var(--dim);font-size:.8rem;cursor:pointer;transition:all .2s;position:relative}
   .drop-zone:hover,.drop-zone.drag-over{border-color:var(--acc);background:var(--aglow);color:var(--tx)}
   .drop-zone input{position:absolute;inset:0;opacity:0;cursor:pointer}
   .drop-zone .icon{font-size:1.5rem;margin-bottom:5px;display:block}
   .drop-hint{font-size:.66rem;color:var(--mut);margin-top:4px}
   .import-preview{margin-top:10px;font-size:.78rem;color:var(--dim)}.import-preview strong{color:var(--tx)}
- 
+
   .confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;display:none;align-items:center;justify-content:center}
   .confirm-overlay.open{display:flex}
   .confirm-box{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:24px 28px;max-width:360px;text-align:center}
   .confirm-box p{margin-bottom:14px;font-size:.85rem;line-height:1.5}
   .confirm-box .btns{display:flex;gap:9px;justify-content:center}
- 
+
   /* Signals panel */
   .signals-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
   .sig-section h4{font-size:.78rem;font-weight:700;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--bd)}
@@ -107,7 +107,7 @@
   .sig-label{color:var(--dim);font-size:.68rem}
   .sig-val{font-weight:700;margin-left:auto}
   .sig-empty{color:var(--mut);font-size:.76rem;padding:8px 0}
- 
+
   @media(max-width:700px){
     .wrap{padding:14px 10px 36px}header h1{font-size:1.3rem}.chart-wrap{height:260px}.kpis{grid-template-columns:repeat(2,1fr)}.signals-grid{grid-template-columns:1fr}
   }
@@ -116,14 +116,14 @@
 <body>
 <div class="noise"></div>
 <div class="wrap">
- 
+
 <header>
   <h1>Lead Times · XmR Control Charts</h1>
   <div class="sub">Wykres X (Cycle Time) + Moving Range z granicami kontrolnymi i detekcją sygnałów</div>
 </header>
- 
+
 <div class="kpis" id="kpis"></div>
- 
+
 <div class="toolbar">
   <div class="group" id="size-filters"></div>
   <div class="spacer"></div>
@@ -135,17 +135,17 @@
   <button class="btn" onclick="togglePanel('signals-panel')">Sygnały</button>
   <button class="btn danger" onclick="confirmClearAll()">Usuń wszystko</button>
 </div>
- 
+
 <div class="panel" id="add-panel"><h3>Dodaj element</h3><div class="row"><div class="field"><label>Data</label><input type="date" id="add-date"></div><div class="field"><label>Rozmiar</label><select id="add-size"><option value="S">S</option><option value="M" selected>M</option><option value="L">L</option></select></div><div class="field"><label>Czas (dni)</label><input type="number" id="add-lt" min="1" placeholder="45"></div><button class="btn success" onclick="addEntry()" style="align-self:flex-end">Dodaj</button></div></div>
- 
+
 <div class="panel" id="import-panel"><h3>Załaduj Excel / CSV</h3><div style="font-size:.72rem;color:var(--dim);margin-bottom:10px">Kolumny: Data ukończenia, Deklarowany rozmiar (S/M/L), Czas realizacji</div><div class="drop-zone" id="drop-zone"><span class="icon">📂</span>Przeciągnij plik lub kliknij<div class="drop-hint">.xlsx · .xls · .csv</div><input type="file" id="file-input" accept=".xlsx,.xls,.csv"></div><div class="import-preview" id="import-preview"></div><div class="row" style="margin-top:10px;display:none" id="import-actions"><label style="font-size:.78rem;display:flex;align-items:center;gap:5px;color:var(--dim);cursor:pointer"><input type="checkbox" id="import-replace" checked> Zastąp dane</label><div style="flex:1"></div><button class="btn success" onclick="confirmImport()">Importuj</button><button class="btn" onclick="cancelImport()">Anuluj</button></div></div>
- 
+
 <div class="panel" id="trim-panel"><h3>Odetnij stare dane</h3><div class="row"><div class="field"><label>Data graniczna</label><input type="date" id="trim-date"></div><button class="btn danger" onclick="trimData()" style="align-self:flex-end">Odetnij</button></div></div>
- 
+
 <div class="panel" id="table-panel"><h3>Dane <span id="data-count" style="color:var(--dim);font-weight:400"></span></h3><div class="tbl-wrap"><table><thead><tr><th>#</th><th>Data</th><th>Rozm.</th><th>CT</th><th>MR</th><th></th></tr></thead><tbody id="data-tbody"></tbody></table></div></div>
- 
+
 <div class="panel" id="forecast-panel"><h3>Prognoza</h3><div class="forecast-grid" id="forecast-grid"></div></div>
- 
+
 <!-- Signals panel -->
 <div class="panel" id="signals-panel">
   <h3>Wykryte sygnały</h3>
@@ -155,9 +155,9 @@
     <div class="sig-section"><h4>Wykres MR — Moving Range</h4><div id="sig-mr"></div></div>
   </div>
 </div>
- 
+
 <div class="confirm-overlay" id="confirm-overlay"><div class="confirm-box"><p>Usunąć <strong style="color:var(--danger)">wszystkie dane</strong>?</p><div class="btns"><button class="btn danger" onclick="doClearAll()">Tak</button><button class="btn" onclick="closeConfirm()">Anuluj</button></div></div></div>
- 
+
 <!-- XmR X Chart -->
 <div class="card">
   <div class="card-title">Wykres X — Cycle Time</div>
@@ -171,9 +171,11 @@
     <div class="legend-item"><div class="lg-dot" style="background:var(--sig-strong)"></div>Silny</div>
     <div class="legend-item"><div class="lg-dot" style="background:var(--sig-mod)"></div>Umiark.</div>
     <div class="legend-item"><div class="lg-dot" style="background:var(--sig-weak)"></div>Słaby</div>
+    <div class="legend-item"><div class="lg-line" style="border-color:rgba(52,211,153,.55)"></div>1/3</div>
+    <div class="legend-item"><div class="lg-line" style="border-color:rgba(255,159,67,.55)"></div>2/3</div>
   </div>
 </div>
- 
+
 <!-- MR Chart -->
 <div class="card">
   <div class="card-title">Wykres MR — Moving Range</div>
@@ -187,13 +189,15 @@
     <div class="legend-item"><div class="lg-dot" style="background:var(--sig-strong)"></div>Silny</div>
     <div class="legend-item"><div class="lg-dot" style="background:var(--sig-mod)"></div>Umiark.</div>
     <div class="legend-item"><div class="lg-dot" style="background:var(--sig-weak)"></div>Słaby</div>
+    <div class="legend-item"><div class="lg-line" style="border-color:rgba(52,211,153,.55)"></div>1/3</div>
+    <div class="legend-item"><div class="lg-line" style="border-color:rgba(255,159,67,.55)"></div>2/3</div>
   </div>
 </div>
- 
+
 <!-- Scatterplot -->
 <div class="card">
   <div class="card-title">Scatterplot — wg rozmiaru</div>
-  <div class="card-sub">P50 · P85 · P95</div>
+  <div class="card-sub">P50 · P85 · P95 · UNPL / LNPL · Strefy 1/3 · 2/3 · Sygnały</div>
   <div class="chart-wrap"><canvas id="scatter"></canvas><div class="tooltip" id="sc-tip"></div></div>
   <div class="legend">
     <div class="legend-item"><div class="lg-dot" style="background:var(--s)"></div>S</div>
@@ -202,9 +206,17 @@
     <div class="legend-item"><div class="lg-line" style="border-color:var(--p50)"></div>P50</div>
     <div class="legend-item"><div class="lg-line" style="border-color:var(--p85)"></div>P85</div>
     <div class="legend-item"><div class="lg-line" style="border-color:var(--p95)"></div>P95</div>
+    <div class="legend-item"><div class="lg-solid" style="border-color:var(--avg)"></div>Avg CT</div>
+    <div class="legend-item"><div class="lg-line" style="border-color:var(--unpl)"></div>UNPL</div>
+    <div class="legend-item"><div class="lg-line" style="border-color:var(--lnpl)"></div>LNPL</div>
+    <div class="legend-item"><div class="lg-line" style="border-color:rgba(52,211,153,.55)"></div>1/3</div>
+    <div class="legend-item"><div class="lg-line" style="border-color:rgba(255,159,67,.55)"></div>2/3</div>
+    <div class="legend-item"><div class="lg-dot" style="background:var(--sig-strong)"></div>Silny</div>
+    <div class="legend-item"><div class="lg-dot" style="background:var(--sig-mod)"></div>Umiark.</div>
+    <div class="legend-item"><div class="lg-dot" style="background:var(--sig-weak)"></div>Słaby</div>
   </div>
 </div>
- 
+
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
@@ -213,18 +225,18 @@ const MPL={Stycznia:0,Lutego:1,Marca:2,Kwietnia:3,Maja:4,Czerwca:5,Lipca:6,Sierp
 function parsePL(s){const p=s.split(' ');return new Date(+p[2],MPL[p[1]],+p[0])}
 const INIT=[{"d":"15 Lipca 2024","s":"S","v":49},{"d":"22 Sierpnia 2024","s":"S","v":48},{"d":"10 Września 2024","s":"S","v":87},{"d":"25 Września 2024","s":"M","v":57},{"d":"5 Października 2024","s":"M","v":148},{"d":"14 Października 2024","s":"S","v":53},{"d":"28 Października 2024","s":"S","v":45},{"d":"18 Listopada 2024","s":"M","v":145},{"d":"4 Grudnia 2024","s":"L","v":105},{"d":"8 Stycznia 2025","s":"S","v":5},{"d":"20 Stycznia 2025","s":"L","v":163},{"d":"14 Lutego 2025","s":"S","v":43},{"d":"26 Lutego 2025","s":"M","v":415},{"d":"15 Marca 2025","s":"L","v":123},{"d":"10 Kwietnia 2025","s":"M","v":103},{"d":"5 Maja 2025","s":"L","v":104},{"d":"12 Czerwca 2025","s":"L","v":302},{"d":"25 Czerwca 2025","s":"L","v":158},{"d":"2 Lipca 2025","s":"L","v":98},{"d":"11 Lipca 2025","s":"S","v":52},{"d":"18 Lipca 2025","s":"M","v":95},{"d":"29 Lipca 2025","s":"S","v":70},{"d":"3 Sierpnia 2025","s":"M","v":95},{"d":"14 Sierpnia 2025","s":"M","v":101},{"d":"21 Sierpnia 2025","s":"M","v":57},{"d":"29 Sierpnia 2025","s":"M","v":57},{"d":"8 Września 2025","s":"S","v":53},{"d":"22 Września 2025","s":"L","v":137},{"d":"4 Października 2025","s":"S","v":73},{"d":"12 Października 2025","s":"M","v":60},{"d":"19 Października 2025","s":"S","v":126},{"d":"27 Października 2025","s":"M","v":57},{"d":"5 Listopada 2025","s":"L","v":124},{"d":"15 Listopada 2025","s":"M","v":75},{"d":"25 Listopada 2025","s":"M","v":89},{"d":"10 Grudnia 2025","s":"S","v":44}];
 let DATA=INIT.map(x=>({date:x.d,size:x.s,lead_time:x.v,ts:parsePL(x.d).getTime(),id:Math.random().toString(36).slice(2,9)})).sort((a,b)=>a.ts-b.ts);
- 
+
 const COL={S:'#2dd4a0',M:'#f5b731',L:'#e8537a'};
 const PC={50:'#5b7fff',85:'#ff9f43',95:'#ff5c5c'};
 const PD={50:[4,4],85:[8,5],95:[3,3]};
 const DR=5;
 let aFilter='ALL',openP=new Set();
- 
+
 // ════════════════ HELPERS ════════════════
 function pct(a,p){if(!a.length)return 0;const s=[...a].sort((x,y)=>x-y);const i=(p/100)*(s.length-1);const l=Math.floor(i),h=Math.ceil(i);return l===h?s[l]:s[l]+(s[h]-s[l])*(i-l)}
 function fD(ts){return new Date(ts).toLocaleDateString('pl-PL',{day:'numeric',month:'short',year:'numeric'})}
 function gF(){return aFilter==='ALL'?DATA:DATA.filter(d=>d.size===aFilter)}
- 
+
 function calcXmR(data){
   const v=data.map(d=>d.lead_time);
   if(v.length<2)return{avgCT:v[0]||0,avgMR:0,unpl:v[0]||0,lnpl:0,url:0,lrl:0,mr:[],vals:v};
@@ -233,7 +245,7 @@ function calcXmR(data){
   const avgMR=mr.reduce((a,b)=>a+b,0)/mr.length;
   return{avgCT,avgMR,unpl:avgCT+2.66*avgMR,lnpl:Math.max(0,avgCT-2.66*avgMR),url:3.27*avgMR,lrl:0,mr,vals:v};
 }
- 
+
 // Signal classification
 // For X chart: zones based on distance from avgCT to UNPL/LNPL
 // For MR chart: zones based on distance from 0 to URL
@@ -254,11 +266,11 @@ function getSignalMR(val,xmr){
   if(val>third)return'weak';
   return null;
 }
-const SIG_COL={strong:'#ff4d6a',moderate:'#ff9f43',weak:'#f5b731'};
+const SIG_COL={strong:'#ff4d6a',moderate:'#ff9f43',weak:'#34d399'};
 const SIG_CLS={strong:'sig-strong',moderate:'sig-mod',weak:'sig-weak'};
 const SIG_LBL={strong:'Silny',moderate:'Umiarkowany',weak:'Słaby'};
 const SIG_ICO={strong:'!',moderate:'‼',weak:'~'};
- 
+
 // ════════════════ PANELS ════════════════
 function togglePanel(id){const el=document.getElementById(id);if(openP.has(id)){openP.delete(id);el.classList.remove('open')}else{openP.add(id);el.classList.add('open');if(id==='table-panel')renderTable();if(id==='forecast-panel')renderForecast();if(id==='signals-panel')renderSignals()}}
 function addEntry(){const dv=document.getElementById('add-date').value,sz=document.getElementById('add-size').value,lt=parseInt(document.getElementById('add-lt').value);if(!dv||!lt||lt<1){alert('Uzupełnij pola.');return}const d=new Date(dv);DATA.push({date:d.toLocaleDateString('pl-PL',{day:'numeric',month:'long',year:'numeric'}),size:sz,lead_time:lt,ts:d.getTime(),id:Math.random().toString(36).slice(2,9)});DATA.sort((a,b)=>a.ts-b.ts);document.getElementById('add-date').value='';document.getElementById('add-lt').value='';refresh()}
@@ -267,7 +279,7 @@ function trimData(){const dv=document.getElementById('trim-date').value;if(!dv){
 function confirmClearAll(){document.getElementById('confirm-overlay').classList.add('open')}
 function closeConfirm(){document.getElementById('confirm-overlay').classList.remove('open')}
 function doClearAll(){DATA=[];closeConfirm();refresh()}
- 
+
 // Import
 let pendImp=null;const dz=document.getElementById('drop-zone'),fi=document.getElementById('file-input');
 dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag-over')});dz.addEventListener('dragleave',()=>dz.classList.remove('drag-over'));
@@ -277,7 +289,7 @@ function handleFile(file){const r=new FileReader();r.onload=function(e){try{cons
 function sIE(m){document.getElementById('import-preview').innerHTML=`<span style="color:var(--danger)">${m}</span>`;document.getElementById('import-actions').style.display='none';pendImp=null}
 function confirmImport(){if(!pendImp)return;if(document.getElementById('import-replace').checked)DATA=pendImp;else DATA=[...DATA,...pendImp];DATA.sort((a,b)=>a.ts-b.ts);pendImp=null;document.getElementById('import-preview').innerHTML=`<span style="color:var(--success)">OK</span>`;document.getElementById('import-actions').style.display='none';fi.value='';refresh()}
 function cancelImport(){pendImp=null;document.getElementById('import-preview').innerHTML='';document.getElementById('import-actions').style.display='none';fi.value=''}
- 
+
 // ════════════════ KPIs ════════════════
 function renderKPIs(){
   const data=gF(),v=data.map(d=>d.lead_time);
@@ -296,11 +308,11 @@ function renderKPIs(){
   ];
   document.getElementById('kpis').innerHTML=kp.map(k=>`<div class="kpi"><div class="kpi-label">${k.l}</div><div class="kpi-val" style="color:${k.c}">${k.v}</div><div class="kpi-unit">${k.u}</div></div>`).join('');
 }
- 
+
 // ════════════════ FILTERS ════════════════
 function renderFilters(){document.getElementById('size-filters').innerHTML=['ALL','S','M','L'].map(s=>`<button class="btn${s===aFilter?' active':''}" onclick="setFilter('${s}')">${s==='ALL'?'Wszystkie':s}</button>`).join('')}
 function setFilter(f){aFilter=f;refresh()}
- 
+
 // ════════════════ TABLE ════════════════
 function renderTable(){
   const data=gF(),x=calcXmR(data);
@@ -314,14 +326,14 @@ function renderTable(){
     return `<tr><td>${ico}${i+1}</td><td>${d.date}</td><td><span class="badge badge-${d.size}">${d.size}</span></td><td>${d.lead_time}</td><td>${mr} ${mIco}</td><td><button class="del-btn" onclick="deleteEntry('${d.id}')">✕</button></td></tr>`;
   }).join('');
 }
- 
+
 // ════════════════ SIGNALS PANEL ════════════════
 function renderSignals(){
   const data=gF(),x=calcXmR(data);
   const xSigs=[],mrSigs=[];
   data.forEach((d,i)=>{const s=getSignalX(d.lead_time,x);if(s)xSigs.push({i:i+1,date:d.date,val:d.lead_time,sig:s,size:d.size})});
   x.mr.forEach((v,i)=>{const s=getSignalMR(v,x);if(s)mrSigs.push({i:i+2,date:data[i+1].date,val:v,sig:s})});
- 
+
   const renderList=(arr,type)=>{
     if(!arr.length)return'<div class="sig-empty">Brak sygnałów — proces stabilny</div>';
     return arr.sort((a,b)=>{const o={strong:0,moderate:1,weak:2};return o[a.sig]-o[b.sig]}).map(s=>
@@ -331,7 +343,7 @@ function renderSignals(){
   document.getElementById('sig-x').innerHTML=renderList(xSigs,'x');
   document.getElementById('sig-mr').innerHTML=renderList(mrSigs,'mr');
 }
- 
+
 // ════════════════ FORECAST ════════════════
 function renderForecast(){
   const gr=document.getElementById('forecast-grid');
@@ -347,7 +359,7 @@ function renderForecast(){
       <div class="fc-row"><span class="fc-label">URL</span><span class="fc-val" style="color:var(--url-c)">${Math.round(xm.url)}</span></div></div>`;
   }).join('');
 }
- 
+
 // ════════════════ CHART UTILS ════════════════
 function initCanvas(canvas){
   const dpr=window.devicePixelRatio||1,rect=canvas.parentElement.getBoundingClientRect();
@@ -366,19 +378,16 @@ function drawZoneBands(ctx,PAD,W,H,maxY,minY,avg,limit,isUpper){
   const yOf=v=>PAD.top+ch-((v-minY)/(maxY-minY))*ch;
   const band=isUpper?(limit-avg):(avg-limit);
   const t1=band/3,t2=2*t1;
- 
-  // Zone 1/3 (weak) - yellow tint
+
   if(isUpper){
     const y1=yOf(avg+t1),y2=yOf(avg+t2);
-    ctx.fillStyle='rgba(245,183,49,.03)';ctx.fillRect(PAD.left,y2,cw,y1-y2);
-    // Zone 2/3 (moderate) - orange tint
+    ctx.fillStyle='rgba(52,211,153,.03)';ctx.fillRect(PAD.left,y2,cw,y1-y2);
     const y3=yOf(limit);
     ctx.fillStyle='rgba(255,159,67,.04)';ctx.fillRect(PAD.left,y3,cw,y2-y3);
-    // Beyond limit - red tint
     ctx.fillStyle='rgba(255,77,106,.05)';ctx.fillRect(PAD.left,PAD.top,cw,y3-PAD.top);
   } else if(limit<avg){
     const y1=yOf(avg-t1),y2=yOf(avg-t2),y3=yOf(limit);
-    ctx.fillStyle='rgba(245,183,49,.03)';ctx.fillRect(PAD.left,y1,cw,y2-y1);
+    ctx.fillStyle='rgba(52,211,153,.03)';ctx.fillRect(PAD.left,y1,cw,y2-y1);
     ctx.fillStyle='rgba(255,159,67,.04)';ctx.fillRect(PAD.left,y2,cw,y3-y2);
   }
 }
@@ -387,14 +396,11 @@ function drawZoneBandsMR(ctx,PAD,W,H,maxY,url){
   const yOf=v=>PAD.top+ch-(v/maxY)*ch;
   const t1=url/3,t2=2*t1;
   const y1=yOf(t1),y2=yOf(t2),y3=yOf(url);
-  // Weak zone
-  ctx.fillStyle='rgba(245,183,49,.03)';ctx.fillRect(PAD.left,y2,cw,y1-y2);
-  // Moderate zone
+  ctx.fillStyle='rgba(52,211,153,.03)';ctx.fillRect(PAD.left,y2,cw,y1-y2);
   ctx.fillStyle='rgba(255,159,67,.04)';ctx.fillRect(PAD.left,y3,cw,y2-y3);
-  // Beyond URL
   ctx.fillStyle='rgba(255,77,106,.05)';ctx.fillRect(PAD.left,PAD.top,cw,y3-PAD.top);
 }
- 
+
 // ════════════════ X CHART ════════════════
 const xCv=document.getElementById('x-chart'),xTip=document.getElementById('x-tip');
 function drawX(){
@@ -406,40 +412,47 @@ function drawX(){
   const maxY=Math.max(xm.unpl*1.15,Math.max(...xm.vals)*1.08),minY=0;
   const xOf=i=>PAD.left+(i/(data.length-1))*cw;
   const yOf=v=>PAD.top+ch-((v-minY)/(maxY-minY))*ch;
- 
+
   drawGrid(ctx,PAD,W,H,maxY,minY);
   // Zone bands
   drawZoneBands(ctx,PAD,W,H,maxY,minY,xm.avgCT,xm.unpl,true);
   if(xm.lnpl>0)drawZoneBands(ctx,PAD,W,H,maxY,minY,xm.avgCT,xm.lnpl,false);
- 
+
   // Zone dashed lines at 1/3 and 2/3
   const band=xm.unpl-xm.avgCT;
-  [1/3,2/3].forEach(f=>{
+  const zoneColors={1:'rgba(52,211,153,.50)',2:'rgba(255,159,67,.50)'};
+  const zoneLabels={1:'1/3',2:'2/3'};
+  [1,2].forEach(n=>{
+    const f=n/3;
     const upper=xm.avgCT+f*band,lower=Math.max(0,xm.avgCT-f*band);
-    ctx.setLineDash([2,3]);ctx.strokeStyle='rgba(255,255,255,.06)';ctx.lineWidth=1;
+    ctx.setLineDash([4,6]);ctx.strokeStyle=zoneColors[n];ctx.lineWidth=1;
     [upper,lower].forEach(v=>{if(v>=minY&&v<=maxY){ctx.beginPath();ctx.moveTo(PAD.left,yOf(v));ctx.lineTo(W-PAD.right,yOf(v));ctx.stroke()}});
+    // Labels
+    ctx.setLineDash([]);ctx.font='9px DM Sans';ctx.fillStyle=zoneColors[n];
+    if(upper<=maxY){ctx.textAlign='left';ctx.fillText(`+${zoneLabels[n]}  ${Math.round(upper)}`,PAD.left+5,yOf(upper)-4)}
+    if(lower>=minY&&lower>0){ctx.textAlign='left';ctx.fillText(`−${zoneLabels[n]}  ${Math.round(lower)}`,PAD.left+5,yOf(lower)-4)}
   });
   ctx.setLineDash([]);
- 
+
   // Avg line
   ctx.strokeStyle='#f5b731';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(PAD.left,yOf(xm.avgCT));ctx.lineTo(W-PAD.right,yOf(xm.avgCT));ctx.stroke();
   ctx.fillStyle='#f5b731';ctx.font='bold 10px DM Sans';ctx.textAlign='left';ctx.fillText(`Avg = ${Math.round(xm.avgCT)}`,PAD.left+5,yOf(xm.avgCT)-6);
- 
+
   // UNPL
   ctx.setLineDash([6,4]);ctx.strokeStyle='#ff5c5c';ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(PAD.left,yOf(xm.unpl));ctx.lineTo(W-PAD.right,yOf(xm.unpl));ctx.stroke();
   ctx.fillStyle='#ff5c5c';ctx.font='bold 10px DM Sans';ctx.textAlign='right';ctx.fillText(`UNPL = ${Math.round(xm.unpl)}`,W-PAD.right-5,yOf(xm.unpl)-6);
- 
+
   // LNPL
   ctx.strokeStyle='#2dd4a0';ctx.beginPath();ctx.moveTo(PAD.left,yOf(xm.lnpl));ctx.lineTo(W-PAD.right,yOf(xm.lnpl));ctx.stroke();ctx.setLineDash([]);
   ctx.fillStyle='#2dd4a0';ctx.font='bold 10px DM Sans';ctx.textAlign='right';ctx.fillText(`LNPL = ${Math.round(xm.lnpl)}`,W-PAD.right-5,yOf(xm.lnpl)+13);
- 
+
   // X labels
   ctx.textAlign='center';const step=Math.max(1,Math.floor(data.length/14));
   for(let i=0;i<data.length;i+=step){const x=xOf(i);ctx.fillStyle='#4a4f6a';ctx.font='9px DM Sans';ctx.fillText(new Date(data[i].ts).toLocaleDateString('pl-PL',{day:'numeric',month:'short'}),x,H-PAD.bottom+13);ctx.fillText(`#${i+1}`,x,H-PAD.bottom+24)}
- 
+
   // Line
   ctx.strokeStyle='rgba(91,127,255,.3)';ctx.lineWidth=1.5;ctx.beginPath();data.forEach((d,i)=>{const x=xOf(i),y=yOf(d.lead_time);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y)});ctx.stroke();
- 
+
   // Points
   const pts=[];
   data.forEach((d,i)=>{
@@ -450,11 +463,11 @@ function drawX(){
   });
   xCv._d={pts,xm,W,H};
 }
- 
+
 // X tooltip
 xCv.addEventListener('mousemove',e=>{const r=xCv.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top,cd=xCv._d;if(!cd)return;let h=null,b=99;cd.pts.forEach(p=>{const d=Math.sqrt((p.x-mx)**2+(p.y-my)**2);if(d<18&&d<b){h=p;b=d}});if(h){const sl=h.sig?`<div class="tt-meta" style="color:${SIG_COL[h.sig]}">● ${SIG_LBL[h.sig]} sygnał</div>`:'';xTip.style.display='block';xTip.innerHTML=`<div class="tt-date">#${h.i+1} · ${h.d.date}</div><div class="tt-val" style="color:${h.sig?SIG_COL[h.sig]:'var(--acc)'}">${h.d.lead_time} <span style="font-size:.58rem;color:var(--dim)">dni</span></div><div class="tt-meta"><span class="badge badge-${h.d.size}">${h.d.size}</span></div>${h.mr!==null?`<div class="tt-meta">MR: ${h.mr}</div>`:''}${sl}`;let tx=h.x+12,ty=h.y-50;if(tx+160>cd.W)tx=h.x-165;if(ty<3)ty=h.y+12;xTip.style.left=tx+'px';xTip.style.top=ty+'px';xCv.style.cursor='pointer'}else{xTip.style.display='none';xCv.style.cursor='default'}});
 xCv.addEventListener('mouseleave',()=>{xTip.style.display='none'});
- 
+
 // ════════════════ MR CHART ════════════════
 const mrCv=document.getElementById('mr-chart'),mrTip=document.getElementById('mr-tip');
 function drawMR(){
@@ -466,37 +479,41 @@ function drawMR(){
   const maxY=Math.max(xm.url*1.2,Math.max(...xm.mr)*1.1);
   const xOf=i=>PAD.left+(i/(xm.mr.length-1))*cw;
   const yOf=v=>PAD.top+ch-(v/maxY)*ch;
- 
+
   drawGrid(ctx,PAD,W,H,maxY,0);
   drawZoneBandsMR(ctx,PAD,W,H,maxY,xm.url);
- 
+
   // Zone dashed lines at 1/3 and 2/3 of URL
-  [1/3,2/3].forEach(f=>{
-    const v=f*xm.url;
-    ctx.setLineDash([2,3]);ctx.strokeStyle='rgba(255,255,255,.06)';ctx.lineWidth=1;
+  const mrZoneCol={1:'rgba(52,211,153,.50)',2:'rgba(255,159,67,.50)'};
+  const mrZoneLbl={1:'1/3',2:'2/3'};
+  [1,2].forEach(n=>{
+    const v=n/3*xm.url;
+    ctx.setLineDash([4,6]);ctx.strokeStyle=mrZoneCol[n];ctx.lineWidth=1;
     ctx.beginPath();ctx.moveTo(PAD.left,yOf(v));ctx.lineTo(W-PAD.right,yOf(v));ctx.stroke();
+    ctx.setLineDash([]);ctx.font='9px DM Sans';ctx.fillStyle=mrZoneCol[n];ctx.textAlign='left';
+    ctx.fillText(`${mrZoneLbl[n]}  ${Math.round(v)}`,PAD.left+5,yOf(v)-4);
   });
   ctx.setLineDash([]);
- 
+
   // Avg MR
   ctx.strokeStyle='#a78bfa';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(PAD.left,yOf(xm.avgMR));ctx.lineTo(W-PAD.right,yOf(xm.avgMR));ctx.stroke();
   ctx.fillStyle='#a78bfa';ctx.font='bold 10px DM Sans';ctx.textAlign='left';ctx.fillText(`Avg MR = ${Math.round(xm.avgMR)}`,PAD.left+5,yOf(xm.avgMR)-6);
- 
+
   // URL
   ctx.setLineDash([6,4]);ctx.strokeStyle='#ff5c5c';ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(PAD.left,yOf(xm.url));ctx.lineTo(W-PAD.right,yOf(xm.url));ctx.stroke();
   ctx.fillStyle='#ff5c5c';ctx.font='bold 10px DM Sans';ctx.textAlign='right';ctx.fillText(`URL = ${Math.round(xm.url)}`,W-PAD.right-5,yOf(xm.url)-6);
- 
+
   // LRL
   ctx.strokeStyle='#2dd4a0';ctx.beginPath();ctx.moveTo(PAD.left,yOf(0));ctx.lineTo(W-PAD.right,yOf(0));ctx.stroke();ctx.setLineDash([]);
   ctx.fillStyle='#2dd4a0';ctx.font='bold 10px DM Sans';ctx.textAlign='right';ctx.fillText('LRL = 0',W-PAD.right-5,yOf(0)-6);
- 
+
   // X labels
   ctx.textAlign='center';const step=Math.max(1,Math.floor(xm.mr.length/14));
   for(let i=0;i<xm.mr.length;i+=step){const x=xOf(i);ctx.fillStyle='#4a4f6a';ctx.font='9px DM Sans';ctx.fillText(new Date(data[i+1].ts).toLocaleDateString('pl-PL',{day:'numeric',month:'short'}),x,H-PAD.bottom+13);ctx.fillText(`#${i+2}`,x,H-PAD.bottom+24)}
- 
+
   // Line
   ctx.strokeStyle='rgba(167,139,250,.3)';ctx.lineWidth=1.5;ctx.beginPath();xm.mr.forEach((v,i)=>{const x=xOf(i),y=yOf(v);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y)});ctx.stroke();
- 
+
   // Points
   const pts=[];
   xm.mr.forEach((v,i)=>{
@@ -507,40 +524,94 @@ function drawMR(){
   });
   mrCv._d={pts,xm,W,H};
 }
- 
+
 mrCv.addEventListener('mousemove',e=>{const r=mrCv.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top,cd=mrCv._d;if(!cd)return;let h=null,b=99;cd.pts.forEach(p=>{const d=Math.sqrt((p.x-mx)**2+(p.y-my)**2);if(d<18&&d<b){h=p;b=d}});if(h){const sl=h.sig?`<div class="tt-meta" style="color:${SIG_COL[h.sig]}">● ${SIG_LBL[h.sig]} sygnał</div>`:'';mrTip.style.display='block';mrTip.innerHTML=`<div class="tt-date">#${h.i+1} · ${h.date}</div><div class="tt-val" style="color:${h.sig?SIG_COL[h.sig]:'var(--avgmr)'}">${h.v} <span style="font-size:.58rem;color:var(--dim)">dni</span></div><div class="tt-meta">|${h.from} → ${h.to}| = ${h.v}</div>${sl}`;let tx=h.x+12,ty=h.y-50;if(tx+160>cd.W)tx=h.x-165;if(ty<3)ty=h.y+12;mrTip.style.left=tx+'px';mrTip.style.top=ty+'px';mrCv.style.cursor='pointer'}else{mrTip.style.display='none';mrCv.style.cursor='default'}});
 mrCv.addEventListener('mouseleave',()=>{mrTip.style.display='none'});
- 
+
 // ════════════════ SCATTERPLOT ════════════════
 const scCv=document.getElementById('scatter'),scTip=document.getElementById('sc-tip');
 function drawSC(){
   const data=gF(),{ctx,W,H}=initCanvas(scCv);ctx.clearRect(0,0,W,H);
   if(!data.length){emptyMsg(ctx,W,H,'Brak danych');scCv._d=null;return}
+  const xm=calcXmR(data);
   const PAD={top:26,right:26,bottom:44,left:52};
   const cw=W-PAD.left-PAD.right,ch=H-PAD.top-PAD.bottom;
   const minT=Math.min(...data.map(d=>d.ts)),maxT=Math.max(...data.map(d=>d.ts)),tR=maxT-minT||1;
-  const maxY=Math.max(...data.map(d=>d.lead_time))*1.12;
-  const xOf=d=>PAD.left+((d.ts-minT)/tR)*cw,yOf=d=>PAD.top+ch-(d.lead_time/maxY)*ch,yV=v=>PAD.top+ch-(v/maxY)*ch;
- 
+  const maxY=Math.max(xm.unpl*1.1,Math.max(...data.map(d=>d.lead_time))*1.12);
+  const xOf=d=>PAD.left+((d.ts-minT)/tR)*cw,yOfD=d=>PAD.top+ch-(d.lead_time/maxY)*ch,yV=v=>PAD.top+ch-(v/maxY)*ch;
+
   drawGrid(ctx,PAD,W,H,maxY,0);
+
+  // XmR zone bands
+  if(data.length>=2){
+    drawZoneBands(ctx,PAD,W,H,maxY,0,xm.avgCT,xm.unpl,true);
+    if(xm.lnpl>0)drawZoneBands(ctx,PAD,W,H,maxY,0,xm.avgCT,xm.lnpl,false);
+
+    // 1/3 and 2/3 zone lines
+    const band=xm.unpl-xm.avgCT;
+    const scZoneCol={1:'rgba(52,211,153,.50)',2:'rgba(255,159,67,.50)'};
+    const scZoneLbl={1:'1/3',2:'2/3'};
+    [1,2].forEach(n=>{
+      const f=n/3;
+      const upper=xm.avgCT+f*band,lower=Math.max(0,xm.avgCT-f*band);
+      ctx.setLineDash([4,6]);ctx.strokeStyle=scZoneCol[n];ctx.lineWidth=1;
+      [upper,lower].forEach(v=>{if(v>=0&&v<=maxY){ctx.beginPath();ctx.moveTo(PAD.left,yV(v));ctx.lineTo(W-PAD.right,yV(v));ctx.stroke()}});
+      ctx.setLineDash([]);ctx.font='9px DM Sans';ctx.fillStyle=scZoneCol[n];
+      if(upper<=maxY){ctx.textAlign='left';ctx.fillText(`+${scZoneLbl[n]}  ${Math.round(upper)}`,PAD.left+5,yV(upper)-4)}
+      if(lower>0){ctx.textAlign='left';ctx.fillText(`−${scZoneLbl[n]}  ${Math.round(lower)}`,PAD.left+5,yV(lower)-4)}
+    });
+    ctx.setLineDash([]);
+
+    // Avg CT line
+    ctx.strokeStyle='#f5b731';ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(PAD.left,yV(xm.avgCT));ctx.lineTo(W-PAD.right,yV(xm.avgCT));ctx.stroke();
+    ctx.fillStyle='#f5b731';ctx.font='bold 9px DM Sans';ctx.textAlign='right';ctx.fillText(`Avg=${Math.round(xm.avgCT)}`,W-PAD.right-5,yV(xm.avgCT)+12);
+
+    // UNPL
+    ctx.setLineDash([6,4]);ctx.strokeStyle='#ff5c5c';ctx.lineWidth=1.4;ctx.beginPath();ctx.moveTo(PAD.left,yV(xm.unpl));ctx.lineTo(W-PAD.right,yV(xm.unpl));ctx.stroke();
+    ctx.fillStyle='#ff5c5c';ctx.font='bold 9px DM Sans';ctx.textAlign='right';ctx.fillText(`UNPL=${Math.round(xm.unpl)}`,W-PAD.right-5,yV(xm.unpl)-5);
+
+    // LNPL
+    ctx.strokeStyle='#2dd4a0';ctx.beginPath();ctx.moveTo(PAD.left,yV(xm.lnpl));ctx.lineTo(W-PAD.right,yV(xm.lnpl));ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle='#2dd4a0';ctx.font='bold 9px DM Sans';ctx.textAlign='right';ctx.fillText(`LNPL=${Math.round(xm.lnpl)}`,W-PAD.right-5,yV(xm.lnpl)+12);
+  }
+
   // X ticks
   const MN=['Sty','Lut','Mar','Kwi','Maj','Cze','Lip','Sie','Wrz','Paź','Lis','Gru'];
   let cur=new Date(new Date(minT).getFullYear(),new Date(minT).getMonth(),1);const eD=new Date(maxT);ctx.textAlign='center';
   while(cur<=eD){const t=cur.getTime();if(t>=minT&&t<=maxT){const x=PAD.left+((t-minT)/tR)*cw;ctx.fillStyle='#4a4f6a';ctx.font='10px DM Sans';ctx.fillText(MN[cur.getMonth()]+(cur.getMonth()===0?" '"+String(cur.getFullYear()).slice(2):''),x,H-PAD.bottom+16);ctx.strokeStyle='rgba(38,43,61,.2)';ctx.beginPath();ctx.moveTo(x,PAD.top);ctx.lineTo(x,PAD.top+ch);ctx.stroke()}cur=new Date(cur.getFullYear(),cur.getMonth()+1,1)}
- 
+
   // Percentiles
   const vals=data.map(d=>d.lead_time);
   [50,85,95].forEach(p=>{const v=pct(vals,p),y=yV(v);ctx.setLineDash(PD[p]);ctx.strokeStyle=PC[p];ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(PAD.left,y);ctx.lineTo(W-PAD.right,y);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle=PC[p];ctx.font='bold 9px DM Sans';ctx.textAlign='right';ctx.fillText(`P${p}=${Math.round(v)}`,W-PAD.right-5,y-5)});
- 
+
   // Dupes
   const dk=d=>`${new Date(d.ts).toDateString()}_${d.lead_time}`,cn={};data.forEach(d=>{const k=dk(d);cn[k]=(cn[k]||0)+1});
-  data.forEach(d=>{const x=xOf(d),y=yOf(d),n=cn[dk(d)],r=n>1?DR+Math.min(n*2,7):DR;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fillStyle=COL[d.size];ctx.globalAlpha=.88;ctx.fill();ctx.globalAlpha=1;ctx.strokeStyle='rgba(255,255,255,.1)';ctx.lineWidth=1;ctx.stroke();if(n>1){ctx.fillStyle='rgba(255,255,255,.9)';ctx.font='bold 8px DM Sans';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(n,x,y);ctx.textBaseline='alphabetic'}});
-  scCv._d={data,xOf,yOf,p50:pct(vals,50),p85:pct(vals,85),p95:pct(vals,95),W,H,dk,cn};
+
+  // Points with signal coloring
+  data.forEach(d=>{
+    const x=xOf(d),y=yOfD(d),n=cn[dk(d)],r=n>1?DR+Math.min(n*2,7):DR;
+    const sig=data.length>=2?getSignalX(d.lead_time,xm):null;
+
+    // Glow for strong signals
+    if(sig==='strong'){
+      const g=ctx.createRadialGradient(x,y,0,x,y,14);g.addColorStop(0,'rgba(255,77,106,.25)');g.addColorStop(1,'rgba(255,77,106,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,14,0,Math.PI*2);ctx.fill();
+    }
+
+    ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);
+    ctx.fillStyle=COL[d.size];ctx.globalAlpha=.88;ctx.fill();ctx.globalAlpha=1;
+
+    // Signal-colored ring
+    if(sig){ctx.strokeStyle=SIG_COL[sig];ctx.lineWidth=2}else{ctx.strokeStyle='rgba(255,255,255,.1)';ctx.lineWidth=1}
+    ctx.stroke();
+
+    if(n>1){ctx.fillStyle='rgba(255,255,255,.9)';ctx.font='bold 8px DM Sans';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(n,x,y);ctx.textBaseline='alphabetic'}
+  });
+  scCv._d={data,xOf,yOfD,p50:pct(vals,50),p85:pct(vals,85),p95:pct(vals,95),xm,W,H,dk,cn};
 }
- 
-scCv.addEventListener('mousemove',e=>{const r=scCv.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top,cd=scCv._d;if(!cd)return;let h=null,b=99;cd.data.forEach(d=>{const dx=cd.xOf(d)-mx,dy=cd.yOf(d)-my,dist=Math.sqrt(dx*dx+dy*dy);if(dist<20&&dist<b){h=d;b=dist}});if(h){const z=h.lead_time>cd.p95?'<span style="color:var(--p95)">▲>P95</span>':h.lead_time>cd.p85?'<span style="color:var(--p85)">▲>P85</span>':h.lead_time>cd.p50?'P50–P85':'<span style="color:var(--s)">≤P50</span>';scTip.style.display='block';scTip.innerHTML=`<div class="tt-date">${h.date}</div><div class="tt-val" style="color:${COL[h.size]}">${h.lead_time}</div><div class="tt-meta"><span class="badge badge-${h.size}">${h.size}</span> ${z}</div>`;let tx=cd.xOf(h)+12,ty=cd.yOf(h)-45;if(tx+155>cd.W)tx=cd.xOf(h)-160;if(ty<3)ty=cd.yOf(h)+12;scTip.style.left=tx+'px';scTip.style.top=ty+'px';scCv.style.cursor='pointer'}else{scTip.style.display='none';scCv.style.cursor='default'}});
+
+scCv.addEventListener('mousemove',e=>{const r=scCv.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top,cd=scCv._d;if(!cd)return;let h=null,b=99;cd.data.forEach(d=>{const dx=cd.xOf(d)-mx,dy=cd.yOfD(d)-my,dist=Math.sqrt(dx*dx+dy*dy);if(dist<20&&dist<b){h=d;b=dist}});if(h){const z=h.lead_time>cd.p95?'<span style="color:var(--p95)">▲>P95</span>':h.lead_time>cd.p85?'<span style="color:var(--p85)">▲>P85</span>':h.lead_time>cd.p50?'P50–P85':'<span style="color:var(--s)">≤P50</span>';const sig=cd.data.length>=2?getSignalX(h.lead_time,cd.xm):null;const sl=sig?`<div class="tt-meta" style="color:${SIG_COL[sig]}">● ${SIG_LBL[sig]} sygnał</div>`:'';scTip.style.display='block';scTip.innerHTML=`<div class="tt-date">${h.date}</div><div class="tt-val" style="color:${COL[h.size]}">${h.lead_time}</div><div class="tt-meta"><span class="badge badge-${h.size}">${h.size}</span> ${z}</div>${sl}`;let tx=cd.xOf(h)+12,ty=cd.yOfD(h)-55;if(tx+165>cd.W)tx=cd.xOf(h)-170;if(ty<3)ty=cd.yOfD(h)+12;scTip.style.left=tx+'px';scTip.style.top=ty+'px';scCv.style.cursor='pointer'}else{scTip.style.display='none';scCv.style.cursor='default'}});
 scCv.addEventListener('mouseleave',()=>{scTip.style.display='none'});
- 
+
 // ════════════════ REFRESH ════════════════
 function refresh(){renderKPIs();renderFilters();drawX();drawMR();drawSC();if(openP.has('table-panel'))renderTable();if(openP.has('forecast-panel'))renderForecast();if(openP.has('signals-panel'))renderSignals()}
 refresh();
