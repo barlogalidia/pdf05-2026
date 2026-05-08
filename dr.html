@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lead Times — XmR Dashboard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700&family=Playfair+Display:wght@700;800&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#0b0d13;--sf:#13161f;--sf2:#191d2a;--sf3:#1f2436;
+    --bd:#262b3d;--bdl:#333952;
+    --tx:#dfe2f0;--dim:#6b7092;--mut:#4a4f6a;
+    --acc:#5b7fff;--aglow:rgba(91,127,255,.15);
+    --s:#2dd4a0;--m:#f5b731;--l:#e8537a;
+    --p50:#5b7fff;--p85:#ff9f43;--p95:#ff5c5c;
+    --danger:#ff4d6a;--success:#2dd4a0;
+    --unpl:#ff5c5c;--lnpl:#2dd4a0;--avg:#f5b731;
+    --url-c:#ff5c5c;--lrl-c:#2dd4a0;--avgmr:#a78bfa;
+    --sig-strong:#ff4d6a;--sig-mod:#ff9f43;--sig-weak:#34d399;
+    --dr:#38bdf8;--dr-avg:#38bdf8;--dr-mr:#c084fc;
+    --r:12px;
+  }
+  body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-height:100vh}
+  .noise{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.03;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+  .wrap{position:relative;z-index:1;max-width:1340px;margin:0 auto;padding:32px 22px 56px}
+
+  header{margin-bottom:28px}
+  header h1{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:800;letter-spacing:-.5px;background:linear-gradient(135deg,#dfe2f0 30%,#5b7fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  header .sub{color:var(--dim);font-size:.82rem;font-weight:300;margin-top:3px}
+
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:9px;margin-bottom:22px}
+  .kpi{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:14px 13px;overflow:hidden}
+  .kpi-label{font-size:.6rem;text-transform:uppercase;letter-spacing:1.4px;color:var(--dim);margin-bottom:4px}
+  .kpi-val{font-size:1.45rem;font-weight:700;line-height:1}
+  .kpi-unit{font-size:.65rem;color:var(--mut);margin-top:2px}
+
+  .toolbar{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+  .toolbar .group{display:flex;gap:3px}
+  .toolbar .spacer{flex:1;min-width:10px}
+  .btn{background:var(--sf2);border:1px solid var(--bd);color:var(--dim);padding:6px 14px;border-radius:7px;font:inherit;font-size:.74rem;cursor:pointer;transition:all .15s;letter-spacing:.3px;white-space:nowrap}
+  .btn:hover{border-color:var(--acc);color:var(--tx)}
+  .btn.active{background:var(--acc);color:#fff;border-color:var(--acc)}
+  .btn.danger{border-color:var(--danger);color:var(--danger)}.btn.danger:hover{background:var(--danger);color:#fff}
+  .btn.success{border-color:var(--success);color:var(--success)}.btn.success:hover{background:var(--success);color:#fff}
+
+  .card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:20px 18px 14px;margin-bottom:16px}
+  .card-title{font-size:.95rem;font-weight:700;margin-bottom:1px}
+  .card-sub{font-size:.72rem;color:var(--dim);font-weight:300;margin-bottom:14px}
+  .chart-wrap{position:relative;width:100%;height:340px}
+  canvas{display:block}
+
+  .legend{display:flex;gap:16px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px solid var(--bd)}
+  .legend-item{display:flex;align-items:center;gap:5px;font-size:.7rem;color:var(--dim)}
+  .lg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+  .lg-line{width:18px;height:0;flex-shrink:0;border-top:2px dashed}
+  .lg-solid{width:18px;height:0;flex-shrink:0;border-top:2px solid}
+
+  .tooltip{position:absolute;display:none;background:#1a1f2f;border:1px solid var(--bdl);border-radius:10px;padding:10px 14px;font-size:.74rem;pointer-events:none;z-index:10;box-shadow:0 10px 36px rgba(0,0,0,.5);min-width:150px}
+  .tt-date{color:var(--dim);font-size:.64rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:2px}
+  .tt-val{font-size:1.15rem;font-weight:700}
+  .tt-meta{margin-top:2px;font-size:.7rem}
+
+  .panel{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:20px;margin-bottom:16px;display:none}
+  .panel.open{display:block}
+  .panel h3{font-size:.88rem;font-weight:700;margin-bottom:10px}
+  .panel .row{display:flex;gap:9px;flex-wrap:wrap;align-items:flex-end;margin-bottom:9px}
+  .field{display:flex;flex-direction:column;gap:3px}
+  .field label{font-size:.62rem;text-transform:uppercase;letter-spacing:1px;color:var(--dim)}
+  .field input,.field select{background:var(--sf2);border:1px solid var(--bd);color:var(--tx);padding:6px 10px;border-radius:7px;font:inherit;font-size:.78rem;outline:none;min-width:105px}
+  .field input:focus,.field select:focus{border-color:var(--acc)}
+
+  .tbl-wrap{max-height:280px;overflow-y:auto;border:1px solid var(--bd);border-radius:var(--r)}
+  .tbl-wrap::-webkit-scrollbar{width:5px}.tbl-wrap::-webkit-scrollbar-thumb{background:var(--bd);border-radius:3px}
+  table{width:100%;border-collapse:collapse;font-size:.78rem}
+  th{position:sticky;top:0;background:var(--sf2);text-align:left;padding:8px 11px;color:var(--dim);font-weight:500;font-size:.62rem;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--bd)}
+  td{padding:7px 11px;border-bottom:1px solid rgba(38,43,61,.4)}
+  tr:hover td{background:rgba(91,127,255,.03)}
+  .badge{display:inline-block;padding:1px 7px;border-radius:4px;font-size:.68rem;font-weight:700}
+  .badge-S{background:rgba(45,212,160,.12);color:var(--s)}.badge-M{background:rgba(245,183,49,.12);color:var(--m)}.badge-L{background:rgba(232,83,122,.12);color:var(--l)}
+  .del-btn{background:none;border:none;color:var(--mut);cursor:pointer;font-size:.9rem;padding:2px 4px;border-radius:3px;transition:all .15s}.del-btn:hover{color:var(--danger);background:rgba(255,77,106,.1)}
+
+  .forecast-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:9px}
+  .fc-card{background:var(--sf2);border:1px solid var(--bd);border-radius:10px;padding:13px}
+  .fc-size{font-size:.68rem;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:6px}
+  .fc-row{display:flex;justify-content:space-between;font-size:.74rem;padding:2px 0}
+  .fc-label{color:var(--dim)}.fc-val{font-weight:700}
+
+  .drop-zone{border:2px dashed var(--bdl);border-radius:10px;padding:24px 16px;text-align:center;color:var(--dim);font-size:.8rem;cursor:pointer;transition:all .2s;position:relative}
+  .drop-zone:hover,.drop-zone.drag-over{border-color:var(--acc);background:var(--aglow);color:var(--tx)}
+  .drop-zone input{position:absolute;inset:0;opacity:0;cursor:pointer}
+  .drop-zone .icon{font-size:1.5rem;margin-bottom:5px;display:block}
+  .drop-hint{font-size:.66rem;color:var(--mut);margin-top:4px}
+  .import-preview{margin-top:10px;font-size:.78rem;color:var(--dim)}.import-preview strong{color:var(--tx)}
+
+  .confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;display:none;align-items:center;justify-content:center}
+  .confirm-overlay.open{display:flex}
+  .confirm-box{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:24px 28px;max-width:360px;text-align:center}
+  .confirm-box p{margin-bottom:14px;font-size:.85rem;line-height:1.5}
+  .confirm-box .btns{display:flex;gap:9px;justify-content:center}
+
+  /* Signals panel */
+  .signals-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .sig-section h4{font-size:.78rem;font-weight:700;margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--bd)}
+  .sig-item{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:.76rem;border-bottom:1px solid rgba(38,43,61,.25)}
+  .sig-icon{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;flex-shrink:0;color:#fff}
+  .sig-strong{background:var(--sig-strong)}.sig-mod{background:var(--sig-mod)}.sig-weak{background:var(--sig-weak)}
+  .sig-label{color:var(--dim);font-size:.68rem}
+  .sig-val{font-weight:700;margin-left:auto}
+  .sig-empty{color:var(--mut);font-size:.76rem;padding:8px 0}
+
+  @media(max-width:700px){
+    .wrap{padding:14px 10px 36px}header h1{font-size:1.3rem}.chart-wrap{height:260px}.kpis{grid-template-columns:repeat(2,1fr)}.signals-grid{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="noise"></div>
+<div class="wrap">
+
+<header>
+  <h1>Lead Times · XmR Control Charts</h1>
+  <div class="sub">Wykres X (Cycle Time) + Moving Range z granicami kontrolnymi i detekcją sygnałów</div>
+</header>
+
+<div class="kpis" id="kpis"></div>
+
+<div class="toolbar">
+  <div class="group" id="size-filters"></div>
+  <div class="spacer"></div>
+  <button class="btn success" onclick="togglePanel('add-panel')">+ Dodaj</button>
+  <button class="btn" onclick="togglePanel('import-panel')">Załaduj Excel</button>
+  <button class="btn" onclick="togglePanel('trim-panel')">Odetnij stare</button>
+  <button class="btn" onclick="togglePanel('table-panel')">Tabela</button>
+  <button class="btn" onclick="togglePanel('forecast-panel')">Prognoza</button>
+  <button class="btn" onclick="togglePanel('signals-panel')">Sygnały</button>
+  <button class="btn danger" onclick="confirmClearAll()">Usuń wszystko</button>
+</div>
+
+<div class="panel" id="add-panel"><h3>Dodaj element</h3><div class="row"><div class="field"><label>Data</label><input type="date" id="add-date"></div><div class="field"><label>Rozmiar</label><select id="add-size"><option value="S">S</option><option value="M" selected>M</option><option value="L">L</option></select></div><div class="field"><label>Czas (dni)</label><input type="number" id="add-lt" min="1" placeholder="45"></div><button class="btn success" onclick="addEntry()" style="align-self:flex-end">Dodaj</button></div></div>
+
+<div class="panel" id="import-panel"><h3>Załaduj Excel / CSV</h3><div style="font-size:.72rem;color:var(--dim);margin-bottom:10px">Kolumny: Data ukończenia, Deklarowany rozmiar (S/M/L), Czas realizacji</div><div class="drop-zone" id="drop-zone"><span class="icon">📂</span>Przeciągnij plik lub kliknij<div class="drop-hint">.xlsx · .xls · .csv</div><input type="file" id="file-input" accept=".xlsx,.xls,.csv"></div><div class="import-preview" id="import-preview"></div><div class="row" style="margin-top:10px;display:none" id="import-actions"><label style="font-size:.78rem;display:flex;align-items:center;gap:5px;color:var(--dim);cursor:pointer"><input type="checkbox" id="import-replace" checked> Zastąp dane</label><div style="flex:1"></div><button class="btn success" onclick="confirmImport()">Importuj</button><button class="btn" onclick="cancelImport()">Anuluj</button></div></div>
+
+<div class="panel" id="trim-panel"><h3>Odetnij stare dane</h3><div class="row"><div class="field"><label>Data graniczna</label><input type="date" id="trim-date"></div><button class="btn danger" onclick="trimData()" style="align-self:flex-end">Odetnij</button></div></div>
+
+<div class="panel" id="table-panel"><h3>Dane <span id="data-count" style="color:var(--dim);font-weight:400"></span></h3><div class="tbl-wrap"><table><thead><tr><th>#</th><th>Data</th><th>Rozm.</th><th>CT</th><th>MR</th><th></th></tr></thead><tbody id="data-tbody"></tbody></table></div></div>
+
+<div class="panel" id="forecast-panel"><h3>Prognoza</h3><div class="forecast-grid" id="forecast-grid"></div></div>
+
+<!-- Signals panel -->
+<div class="panel" id="signals-panel">
+  <h3>Wykryte sygnały</h3>
+  <div class="card-sub" style="margin-bottom:10px">Analiza odchyleń od granic kontrolnych na wykresie X i MR</div>
+  <div class="signals-grid">
+    <div class="sig-section"><h4>Wykres X — Cycle Time</h4><div id="sig-x"></div></div>
+    <div class="sig-section"><h4>Wykres MR — Moving Range</h4><div id="sig-mr"></div></div>
+  </div>
+</div>
+
+<div class="confirm-overlay" id="confirm-overlay"><div class="confirm-box"><p>Usunąć <strong style="color:var(--danger)">wszystkie dane</strong>?</p><div class="btns"><button class="btn danger" onclick="doClearAll()">Tak</button><button class="btn" onclick="closeConfirm()">Anuluj</button></div></div></div>
+
+<!-- XmR X Chart -->
+<div class="card">
+  <div class="card-title">Wykres X — Cycle Time</div>
+  <div class="card-sub">Sekwencja czasów realizacji · Avg CT ± 2.66 × Avg MR → UNPL / LNPL · Strefy sygnałów: 1/3 · 2/3 · granice</div>
+  <div class="chart-wrap"><canvas id="x-chart"></canvas><div class="tooltip" id="x-tip"></div></div>
+  <div class="legend">
+    <div class="legend-item"><div class="lg-dot" style="background:var(--acc)"></div>CT</div>
+    <div class="legend-item"><div class="lg-solid" style="border-color:var(--avg)"></div>Avg CT</div>
+    <div class="legend-item"><div class="lg-line" style="border-color:var(--unpl)"></div>UNPL</div>
+    <div class="legend-item"><div class="lg-line" style="border-color:var(--lnpl)"></div>LNPL</div>
+    <div class="legend-item"><div class="lg-dot" style="background:var(--sig-strong)"></div>Silny</div>
+    <div class="legend-item"><div class="lg-dot" style="background:var(--sig-mod)"></div>Umiark.</div>
+    <div class="legend-item"><div class="lg-dot" style="background:var(--sig-weak)"></div>Słaby</div>
+    <div class="legend-item"><div class="lg-line" style="border-color:rgba(52,211,153,.55)"></div>1/3</div>
+    <div class="legend-item"><div class="lg-line" style="border-color:rgba(255,159,67,.55)"></div>2/3</div>
+  </div>
+</div>
+
+<!-- MR Chart -->
+<div class="card">
+  <div class="card-title">Wykres MR — Moving Range</div>
+  <div class="card-sub">Bezwzględne różnice kolejnych CT · Avg MR · URL = 3.27 × Avg MR · LRL = 0 · Strefy 1/3 · 2/3 · granice</div>
+  <div class="chart-wrap"><canvas id="mr-chart"></canvas><div class="tooltip" id="mr-tip"></div></div>
+  <div class="legend">
+    <div class="legend-item"><div class="lg-dot" style="background:var(--avgmr)"></div>MR</div>
+    <div class="legend-item"><div class="lg-solid" style="border-color:var(--avgmr)"></div>Avg MR</div>
+    <div class="legend-item"><div class="lg-line" style="border-color:var(--url-c)"></div>URL</div>
+    <div class="legend-item"><div class="lg-line" style="border-color:var(--lrl-c)"></div>LRL</div>
+    <div class="legend-item"><div class="lg-dot" style="background:var(--sig-strong)"></div>Silny</div>
+    <div class="legend-item"><div class="lg-dot" style="background:var(--sig-mod)"></div>Umiark.</div>
+    <div class="legend-item"><div class="lg-dot" style="background:var(--sig-weak)"></div>Słaby</div>
+    <div class="legend-item"><div class="lg-line" style="border-color:rgba(52,211,153,.55)"></div>1/3</div>
+    <div class="legend-item"><div class="lg-line" style="border-color:rgba(255,159,67,.55)"></div>2/3</div>
+  </div>
+</div>
+
+<!-- Scatterplot -->
+<div class="card">
+  <div class="card-title">Scatterplot — wg rozmiaru</div>
+  <div class="card-sub">P50 · P85 · P95</div>
+  <div class="chart-wrap"><canvas id="scatter"></canvas><div class="tooltip" id="sc-tip"></div></div>
+  <div class="legend">
+    <div class="legend-item"><div class="lg-dot" style="background:var(--s)"></div>S</div>
+    <div class="legend-item"><div class="lg-dot" style="background:var(--m)"></div>M</div>
+    <div class="legend-item"><div class="lg-dot" style="background:var(--l)"></div>L</div>
+    <div class="legend-item"><div class="lg-line" style="border-color:var(--p50)"></div>P50</div>
+    <div class="legend-item"><div class="lg-line" style="border-color:var(--p85)"></div>P85</div>
+    <div class="legend-item"><div class="lg-line" style="border-color:var(--p95)"></div>P95</div>
+  </div>
+</div>
+
+<!-- ═══ THROUGHPUT SECTION ═══ -->
+<div style="margin-top:28px;margin-bottom:16px">
+  <h2 style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:800;background:linear-gradient(135deg,#dfe2f0 30%,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Throughput · Tempo dostarczania</h2>
+  <div style="color:var(--dim);font-size:.8rem;font-weight:300;margin-top:3px">Dzienna przepustowość — XmR Control Charts</div>
+</div>
+
+<div class="kpis" id="dr-kpis"></div>
+
+<div class="toolbar">
+  <button class="btn" onclick="togglePanel('dr-signals-panel')">Sygnały DR</button>
+</div>
+
+<div class="panel" id="dr-signals-panel">
+  <h3>Wykryte sygnały — Throughput</h3>
+  <div class="signals-grid">
+    <div class="sig-section"><h4>Wykres X — Delivery Rate</h4><div id="sig-dr-x"></div></div>
+    <div class="sig-section"><h4>Wykres MR — Moving Range</h4><div id="sig-dr-mr"></div></div>
+  </div>
+</div>
+
+<!-- DR X Chart -->
+<div class="card">
+  <div class="card-title">Wykres X — Delivery Rate (Throughput)</div>
+  <div class="card-sub">Dzienna przepustowość · Avg DR ± 2.66 × Avg MR → UNPL / LNPL · Strefy 1/3 · 2/3 · granice</div>
+  <div class="chart-wrap"><canvas id="dr-x-chart"></canvas><div class="tooltip" id="dr-x-tip"></div></div>
+  <div class="legend">
+    <div class="legend-item"><div class="lg-dot" style="background:var(--dr)"></div>DR</div>
+    <div class="legend-item"><div class="lg-solid" style="border-color:var(--dr-avg)"></div>Avg DR</div>
+    <div class="legend-item"><div class="lg-line" style="border-color:var(--unpl)"></div>UNPL</div>
+    <div class="legend-item"><div class="lg-line" style="border-color:var(--lnpl)"></div>LNPL</div>
+    <div class="legend-item"><div class="lg-dot" style="background:var(--sig-strong)"></div><span title="Silny sygnał">❗</span></div>
+    <div class="legend-item"><div class="lg-dot" style="background:var(--sig-mod)"></div><span title="Umiarkowany">❓</span></div>
+    <div class="legend-item"><div class="lg-dot" style="background:var(--sig-weak)"></div><span title="Słaby">💡</span></div>
+    <div class="legend-item"><div class="lg-line" style="border-color:rgba(52,211,153,.55)"></div>1/3</div>
+    <div class="legend-item"><div class="lg-line" style="border-color:rgba(255,159,67,.55)"></div>2/3</div>
+  </div>
+</div>
+
+<!-- DR MR Chart -->
+<div class="card">
+  <div class="card-title">Wykres MR — Moving Range (Throughput)</div>
+  <div class="card-sub">Bezwzględne różnice kolejnych DR · Avg MR · URL = 3.27 × Avg MR · LRL = 0</div>
+  <div class="chart-wrap"><canvas id="dr-mr-chart"></canvas><div class="tooltip" id="dr-mr-tip"></div></div>
+  <div class="legend">
+    <div class="legend-item"><div class="lg-dot" style="background:var(--dr-mr)"></div>MR</div>
+    <div class="legend-item"><div class="lg-solid" style="border-color:var(--dr-mr)"></div>Avg MR</div>
+    <div class="legend-item"><div class="lg-line" style="border-color:var(--url-c)"></div>URL</div>
+    <div class="legend-item"><div class="lg-line" style="border-color:var(--lrl-c)"></div>LRL</div>
+    <div class="legend-item"><div class="lg-dot" style="background:var(--sig-strong)"></div><span title="Silny sygnał">❗</span></div>
+    <div class="legend-item"><div class="lg-dot" style="background:var(--sig-mod)"></div><span title="Umiarkowany">❓</span></div>
+    <div class="legend-item"><div class="lg-dot" style="background:var(--sig-weak)"></div><span title="Słaby">💡</span></div>
+    <div class="legend-item"><div class="lg-line" style="border-color:rgba(52,211,153,.55)"></div>1/3</div>
+    <div class="legend-item"><div class="lg-line" style="border-color:rgba(255,159,67,.55)"></div>2/3</div>
+  </div>
+</div>
+
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+// ════════════════ DATA ════════════════
+const MPL={Stycznia:0,Lutego:1,Marca:2,Kwietnia:3,Maja:4,Czerwca:5,Lipca:6,Sierpnia:7,Września:8,Października:9,Listopada:10,Grudnia:11};
+function parsePL(s){const p=s.split(' ');return new Date(+p[2],MPL[p[1]],+p[0])}
+const INIT=[{"d":"15 Lipca 2024","s":"S","v":49},{"d":"22 Sierpnia 2024","s":"S","v":48},{"d":"10 Września 2024","s":"S","v":87},{"d":"25 Września 2024","s":"M","v":57},{"d":"5 Października 2024","s":"M","v":148},{"d":"14 Października 2024","s":"S","v":53},{"d":"28 Października 2024","s":"S","v":45},{"d":"18 Listopada 2024","s":"M","v":145},{"d":"4 Grudnia 2024","s":"L","v":105},{"d":"8 Stycznia 2025","s":"S","v":5},{"d":"20 Stycznia 2025","s":"L","v":163},{"d":"14 Lutego 2025","s":"S","v":43},{"d":"26 Lutego 2025","s":"M","v":415},{"d":"15 Marca 2025","s":"L","v":123},{"d":"10 Kwietnia 2025","s":"M","v":103},{"d":"5 Maja 2025","s":"L","v":104},{"d":"12 Czerwca 2025","s":"L","v":302},{"d":"25 Czerwca 2025","s":"L","v":158},{"d":"2 Lipca 2025","s":"L","v":98},{"d":"11 Lipca 2025","s":"S","v":52},{"d":"18 Lipca 2025","s":"M","v":95},{"d":"29 Lipca 2025","s":"S","v":70},{"d":"3 Sierpnia 2025","s":"M","v":95},{"d":"14 Sierpnia 2025","s":"M","v":101},{"d":"21 Sierpnia 2025","s":"M","v":57},{"d":"29 Sierpnia 2025","s":"M","v":57},{"d":"8 Września 2025","s":"S","v":53},{"d":"22 Września 2025","s":"L","v":137},{"d":"4 Października 2025","s":"S","v":73},{"d":"12 Października 2025","s":"M","v":60},{"d":"19 Października 2025","s":"S","v":126},{"d":"27 Października 2025","s":"M","v":57},{"d":"5 Listopada 2025","s":"L","v":124},{"d":"15 Listopada 2025","s":"M","v":75},{"d":"25 Listopada 2025","s":"M","v":89},{"d":"10 Grudnia 2025","s":"S","v":44}];
+let DATA=INIT.map(x=>({date:x.d,size:x.s,lead_time:x.v,ts:parsePL(x.d).getTime(),id:Math.random().toString(36).slice(2,9)})).sort((a,b)=>a.ts-b.ts);
+
+const COL={S:'#2dd4a0',M:'#f5b731',L:'#e8537a'};
+const PC={50:'#5b7fff',85:'#ff9f43',95:'#ff5c5c'};
+const PD={50:[4,4],85:[8,5],95:[3,3]};
+const DR=5;
+let aFilter='ALL',openP=new Set();
+
+// ════════════════ HELPERS ════════════════
+function pct(a,p){if(!a.length)return 0;const s=[...a].sort((x,y)=>x-y);const i=(p/100)*(s.length-1);const l=Math.floor(i),h=Math.ceil(i);return l===h?s[l]:s[l]+(s[h]-s[l])*(i-l)}
+function fD(ts){return new Date(ts).toLocaleDateString('pl-PL',{day:'numeric',month:'short',year:'numeric'})}
+function gF(){return aFilter==='ALL'?DATA:DATA.filter(d=>d.size===aFilter)}
+
+function calcXmR(data){
+  const v=data.map(d=>d.lead_time);
+  if(v.length<2)return{avgCT:v[0]||0,avgMR:0,unpl:v[0]||0,lnpl:0,url:0,lrl:0,mr:[],vals:v};
+  const mr=[];for(let i=1;i<v.length;i++)mr.push(Math.abs(v[i]-v[i-1]));
+  const avgCT=v.reduce((a,b)=>a+b,0)/v.length;
+  const avgMR=mr.reduce((a,b)=>a+b,0)/mr.length;
+  return{avgCT,avgMR,unpl:avgCT+2.66*avgMR,lnpl:Math.max(0,avgCT-2.66*avgMR),url:3.27*avgMR,lrl:0,mr,vals:v};
+}
+
+// Signal classification
+// For X chart: zones based on distance from avgCT to UNPL/LNPL
+// For MR chart: zones based on distance from 0 to URL
+function getSignalX(val,xmr){
+  const band=xmr.unpl-xmr.avgCT; // = 2.66*avgMR
+  const third=band/3;
+  const dev=val-xmr.avgCT;
+  const absDev=Math.abs(dev);
+  if(val>xmr.unpl||val<xmr.lnpl)return'strong';
+  if(absDev>2*third)return'moderate';
+  if(absDev>third)return'weak';
+  return null;
+}
+function getSignalMR(val,xmr){
+  const third=xmr.url/3;
+  if(val>xmr.url)return'strong';
+  if(val>2*third)return'moderate';
+  if(val>third)return'weak';
+  return null;
+}
+const SIG_COL={strong:'#ff4d6a',moderate:'#ff9f43',weak:'#34d399'};
+const SIG_CLS={strong:'sig-strong',moderate:'sig-mod',weak:'sig-weak'};
+const SIG_LBL={strong:'Silny',moderate:'Umiarkowany',weak:'Słaby'};
+const SIG_ICO={strong:'!',moderate:'‼',weak:'~'};
+
+// ════════════════ PANELS ════════════════
+function togglePanel(id){const el=document.getElementById(id);if(openP.has(id)){openP.delete(id);el.classList.remove('open')}else{openP.add(id);el.classList.add('open');if(id==='table-panel')renderTable();if(id==='forecast-panel')renderForecast();if(id==='signals-panel')renderSignals()}}
+function addEntry(){const dv=document.getElementById('add-date').value,sz=document.getElementById('add-size').value,lt=parseInt(document.getElementById('add-lt').value);if(!dv||!lt||lt<1){alert('Uzupełnij pola.');return}const d=new Date(dv);DATA.push({date:d.toLocaleDateString('pl-PL',{day:'numeric',month:'long',year:'numeric'}),size:sz,lead_time:lt,ts:d.getTime(),id:Math.random().toString(36).slice(2,9)});DATA.sort((a,b)=>a.ts-b.ts);document.getElementById('add-date').value='';document.getElementById('add-lt').value='';refresh()}
+function deleteEntry(id){DATA=DATA.filter(d=>d.id!==id);refresh()}
+function trimData(){const dv=document.getElementById('trim-date').value;if(!dv){alert('Wybierz datę.');return}const c=new Date(dv).getTime(),b=DATA.length;DATA=DATA.filter(d=>d.ts>=c);if(b===DATA.length)alert('Brak danych do usunięcia.');refresh()}
+function confirmClearAll(){document.getElementById('confirm-overlay').classList.add('open')}
+function closeConfirm(){document.getElementById('confirm-overlay').classList.remove('open')}
+function doClearAll(){DATA=[];closeConfirm();refresh()}
+
+// Import
+let pendImp=null;const dz=document.getElementById('drop-zone'),fi=document.getElementById('file-input');
+dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag-over')});dz.addEventListener('dragleave',()=>dz.classList.remove('drag-over'));
+dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag-over');if(e.dataTransfer.files.length)handleFile(e.dataTransfer.files[0])});
+fi.addEventListener('change',e=>{if(e.target.files.length)handleFile(e.target.files[0])});
+function handleFile(file){const r=new FileReader();r.onload=function(e){try{const d=new Uint8Array(e.target.result),wb=XLSX.read(d,{type:'array',cellDates:true}),ws=wb.Sheets[wb.SheetNames[0]],rows=XLSX.utils.sheet_to_json(ws,{defval:''});if(!rows.length){sIE('Pusty plik.');return}const cols=Object.keys(rows[0]),dc=cols.find(c=>/data/i.test(c))||cols[0],sc=cols.find(c=>/rozmiar|size/i.test(c))||cols[1],lc=cols.find(c=>/czas|lead|time|realizacj/i.test(c))||cols[2];const parsed=[];let sk=0;rows.forEach(r=>{const rd=r[dc],sz=String(r[sc]||'').trim().toUpperCase(),lt=parseFloat(r[lc]);if(!sz||!['S','M','L'].includes(sz)||isNaN(lt)||lt<0){sk++;return}let ts;if(rd instanceof Date&&!isNaN(rd))ts=rd.getTime();else{const s=String(rd).trim(),pm=s.match(/^(\d{1,2})\s+(\w+)\s+(\d{4})$/);if(pm&&MPL[pm[2]]!==undefined)ts=new Date(+pm[3],MPL[pm[2]],+pm[1]).getTime();else{const dd=new Date(s);if(!isNaN(dd))ts=dd.getTime();else{sk++;return}}}parsed.push({date:new Date(ts).toLocaleDateString('pl-PL',{day:'numeric',month:'long',year:'numeric'}),size:sz,lead_time:Math.round(lt),ts,id:Math.random().toString(36).slice(2,9)})});if(!parsed.length){sIE(`Nie sparsowano. Pominięto: ${sk}`);return}pendImp=parsed;document.getElementById('import-preview').innerHTML=`<strong>${parsed.length}</strong> wierszy z <strong>${file.name}</strong>${sk?` · <span style="color:var(--p85)">${sk} pom.</span>`:''}`;document.getElementById('import-actions').style.display='flex'}catch(err){sIE('Błąd: '+err.message)}};r.readAsArrayBuffer(file)}
+function sIE(m){document.getElementById('import-preview').innerHTML=`<span style="color:var(--danger)">${m}</span>`;document.getElementById('import-actions').style.display='none';pendImp=null}
+function confirmImport(){if(!pendImp)return;if(document.getElementById('import-replace').checked)DATA=pendImp;else DATA=[...DATA,...pendImp];DATA.sort((a,b)=>a.ts-b.ts);pendImp=null;document.getElementById('import-preview').innerHTML=`<span style="color:var(--success)">OK</span>`;document.getElementById('import-actions').style.display='none';fi.value='';refresh()}
+function cancelImport(){pendImp=null;document.getElementById('import-preview').innerHTML='';document.getElementById('import-actions').style.display='none';fi.value=''}
+
+// ════════════════ KPIs ════════════════
+function renderKPIs(){
+  const data=gF(),v=data.map(d=>d.lead_time);
+  if(!v.length){document.getElementById('kpis').innerHTML='';return}
+  const x=calcXmR(data);
+  const kp=[
+    {l:'Elementy',v:data.length,u:'szt',c:'var(--acc)'},
+    {l:'Avg CT',v:Math.round(x.avgCT),u:'dni',c:'var(--avg)'},
+    {l:'Avg MR',v:Math.round(x.avgMR),u:'dni',c:'var(--avgmr)'},
+    {l:'UNPL',v:Math.round(x.unpl),u:'dni',c:'var(--unpl)'},
+    {l:'LNPL',v:Math.round(x.lnpl),u:'dni',c:'var(--lnpl)'},
+    {l:'URL',v:Math.round(x.url),u:'dni',c:'var(--url-c)'},
+    {l:'P50',v:Math.round(pct(v,50)),u:'dni',c:'var(--p50)'},
+    {l:'P85',v:Math.round(pct(v,85)),u:'dni',c:'var(--p85)'},
+    {l:'P95',v:Math.round(pct(v,95)),u:'dni',c:'var(--p95)'},
+  ];
+  document.getElementById('kpis').innerHTML=kp.map(k=>`<div class="kpi"><div class="kpi-label">${k.l}</div><div class="kpi-val" style="color:${k.c}">${k.v}</div><div class="kpi-unit">${k.u}</div></div>`).join('');
+}
+
+// ════════════════ FILTERS ════════════════
+function renderFilters(){document.getElementById('size-filters').innerHTML=['ALL','S','M','L'].map(s=>`<button class="btn${s===aFilter?' active':''}" onclick="setFilter('${s}')">${s==='ALL'?'Wszystkie':s}</button>`).join('')}
+function setFilter(f){aFilter=f;refresh()}
+
+// ════════════════ TABLE ════════════════
+function renderTable(){
+  const data=gF(),x=calcXmR(data);
+  document.getElementById('data-count').textContent=`(${data.length})`;
+  document.getElementById('data-tbody').innerHTML=data.map((d,i)=>{
+    const mr=i>0?x.mr[i-1]:'—';
+    const sig=getSignalX(d.lead_time,x);
+    const mrSig=i>0?getSignalMR(x.mr[i-1],x):null;
+    const ico=sig?`<span style="color:${SIG_COL[sig]}" title="${SIG_LBL[sig]} sygnał CT">●</span> `:'';
+    const mIco=mrSig?`<span style="color:${SIG_COL[mrSig]}" title="${SIG_LBL[mrSig]} sygnał MR">●</span>`:'';
+    return `<tr><td>${ico}${i+1}</td><td>${d.date}</td><td><span class="badge badge-${d.size}">${d.size}</span></td><td>${d.lead_time}</td><td>${mr} ${mIco}</td><td><button class="del-btn" onclick="deleteEntry('${d.id}')">✕</button></td></tr>`;
+  }).join('');
+}
+
+// ════════════════ SIGNALS PANEL ════════════════
+function renderSignals(){
+  const data=gF(),x=calcXmR(data);
+  const xSigs=[],mrSigs=[];
+  data.forEach((d,i)=>{const s=getSignalX(d.lead_time,x);if(s)xSigs.push({i:i+1,date:d.date,val:d.lead_time,sig:s,size:d.size})});
+  x.mr.forEach((v,i)=>{const s=getSignalMR(v,x);if(s)mrSigs.push({i:i+2,date:data[i+1].date,val:v,sig:s})});
+
+  const renderList=(arr,type)=>{
+    if(!arr.length)return'<div class="sig-empty">Brak sygnałów — proces stabilny</div>';
+    return arr.sort((a,b)=>{const o={strong:0,moderate:1,weak:2};return o[a.sig]-o[b.sig]}).map(s=>
+      `<div class="sig-item"><div class="sig-icon ${SIG_CLS[s.sig]}">${SIG_ICO[s.sig]}</div><div><strong>#${s.i}</strong> ${s.date}${s.size?' · '+s.size:''}<br><span class="sig-label">${SIG_LBL[s.sig]} sygnał</span></div><div class="sig-val" style="color:${SIG_COL[s.sig]}">${s.val} dni</div></div>`
+    ).join('');
+  };
+  document.getElementById('sig-x').innerHTML=renderList(xSigs,'x');
+  document.getElementById('sig-mr').innerHTML=renderList(mrSigs,'mr');
+}
+
+// ════════════════ FORECAST ════════════════
+function renderForecast(){
+  const gr=document.getElementById('forecast-grid');
+  gr.innerHTML=['ALL','S','M','L'].map(g=>{
+    const d=g==='ALL'?DATA:DATA.filter(x=>x.size===g);if(!d.length)return'';
+    const v=d.map(x=>x.lead_time),xm=calcXmR(d),cl=g==='ALL'?'var(--acc)':COL[g];
+    return `<div class="fc-card"><div class="fc-size" style="color:${cl}">${g==='ALL'?'Wszystkie':`Rozmiar ${g}`} (${d.length})</div>
+      <div class="fc-row"><span class="fc-label">P50</span><span class="fc-val" style="color:var(--p50)">${Math.round(pct(v,50))}</span></div>
+      <div class="fc-row"><span class="fc-label">P85</span><span class="fc-val" style="color:var(--p85)">${Math.round(pct(v,85))}</span></div>
+      <div class="fc-row"><span class="fc-label">P95</span><span class="fc-val" style="color:var(--p95)">${Math.round(pct(v,95))}</span></div>
+      <div class="fc-row" style="margin-top:3px;padding-top:3px;border-top:1px solid var(--bd)"><span class="fc-label">Avg CT</span><span class="fc-val" style="color:var(--avg)">${Math.round(xm.avgCT)}</span></div>
+      <div class="fc-row"><span class="fc-label">UNPL</span><span class="fc-val" style="color:var(--unpl)">${Math.round(xm.unpl)}</span></div>
+      <div class="fc-row"><span class="fc-label">URL</span><span class="fc-val" style="color:var(--url-c)">${Math.round(xm.url)}</span></div></div>`;
+  }).join('');
+}
+
+// ════════════════ CHART UTILS ════════════════
+function initCanvas(canvas){
+  const dpr=window.devicePixelRatio||1,rect=canvas.parentElement.getBoundingClientRect();
+  canvas.width=rect.width*dpr;canvas.height=rect.height*dpr;
+  canvas.style.width=rect.width+'px';canvas.style.height=rect.height+'px';
+  const ctx=canvas.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);
+  return{ctx,W:rect.width,H:rect.height};
+}
+function emptyMsg(ctx,W,H,msg){ctx.clearRect(0,0,W,H);ctx.fillStyle='#4a4f6a';ctx.font='13px DM Sans';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(msg,W/2,H/2)}
+function drawGrid(ctx,PAD,W,H,maxY,minY=0){
+  const cw=W-PAD.left-PAD.right,ch=H-PAD.top-PAD.bottom;
+  for(let i=0;i<=5;i++){const y=PAD.top+(i/5)*ch,val=Math.round(minY+(maxY-minY)*(1-i/5));ctx.strokeStyle='rgba(38,43,61,.35)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(PAD.left,y);ctx.lineTo(W-PAD.right,y);ctx.stroke();ctx.fillStyle='#4a4f6a';ctx.font='10px DM Sans';ctx.textAlign='right';ctx.fillText(val,PAD.left-8,y+4)}
+}
+function drawZoneBands(ctx,PAD,W,H,maxY,minY,avg,limit,isUpper){
+  const cw=W-PAD.left-PAD.right,ch=H-PAD.top-PAD.bottom;
+  const yOf=v=>PAD.top+ch-((v-minY)/(maxY-minY))*ch;
+  const band=isUpper?(limit-avg):(avg-limit);
+  const t1=band/3,t2=2*t1;
+
+  if(isUpper){
+    const y1=yOf(avg+t1),y2=yOf(avg+t2);
+    ctx.fillStyle='rgba(52,211,153,.03)';ctx.fillRect(PAD.left,y2,cw,y1-y2);
+    const y3=yOf(limit);
+    ctx.fillStyle='rgba(255,159,67,.04)';ctx.fillRect(PAD.left,y3,cw,y2-y3);
+    ctx.fillStyle='rgba(255,77,106,.05)';ctx.fillRect(PAD.left,PAD.top,cw,y3-PAD.top);
+  } else if(limit<avg){
+    const y1=yOf(avg-t1),y2=yOf(avg-t2),y3=yOf(limit);
+    ctx.fillStyle='rgba(52,211,153,.03)';ctx.fillRect(PAD.left,y1,cw,y2-y1);
+    ctx.fillStyle='rgba(255,159,67,.04)';ctx.fillRect(PAD.left,y2,cw,y3-y2);
+  }
+}
+function drawZoneBandsMR(ctx,PAD,W,H,maxY,url){
+  const cw=W-PAD.left-PAD.right,ch=H-PAD.top-PAD.bottom;
+  const yOf=v=>PAD.top+ch-(v/maxY)*ch;
+  const t1=url/3,t2=2*t1;
+  const y1=yOf(t1),y2=yOf(t2),y3=yOf(url);
+  ctx.fillStyle='rgba(52,211,153,.03)';ctx.fillRect(PAD.left,y2,cw,y1-y2);
+  ctx.fillStyle='rgba(255,159,67,.04)';ctx.fillRect(PAD.left,y3,cw,y2-y3);
+  ctx.fillStyle='rgba(255,77,106,.05)';ctx.fillRect(PAD.left,PAD.top,cw,y3-PAD.top);
+}
+
+// ════════════════ X CHART ════════════════
+const xCv=document.getElementById('x-chart'),xTip=document.getElementById('x-tip');
+function drawX(){
+  const data=gF(),{ctx,W,H}=initCanvas(xCv);ctx.clearRect(0,0,W,H);
+  if(data.length<2){emptyMsg(ctx,W,H,'Min. 2 punkty');xCv._d=null;return}
+  const xm=calcXmR(data);
+  const PAD={top:26,right:26,bottom:44,left:52};
+  const cw=W-PAD.left-PAD.right,ch=H-PAD.top-PAD.bottom;
+  const maxY=Math.max(xm.unpl*1.15,Math.max(...xm.vals)*1.08),minY=0;
+  const xOf=i=>PAD.left+(i/(data.length-1))*cw;
+  const yOf=v=>PAD.top+ch-((v-minY)/(maxY-minY))*ch;
+
+  drawGrid(ctx,PAD,W,H,maxY,minY);
+  // Zone bands
+  drawZoneBands(ctx,PAD,W,H,maxY,minY,xm.avgCT,xm.unpl,true);
+  if(xm.lnpl>0)drawZoneBands(ctx,PAD,W,H,maxY,minY,xm.avgCT,xm.lnpl,false);
+
+  // Zone dashed lines at 1/3 and 2/3
+  const band=xm.unpl-xm.avgCT;
+  const zoneColors={1:'rgba(52,211,153,.50)',2:'rgba(255,159,67,.50)'};
+  const zoneLabels={1:'1/3',2:'2/3'};
+  [1,2].forEach(n=>{
+    const f=n/3;
+    const upper=xm.avgCT+f*band,lower=Math.max(0,xm.avgCT-f*band);
+    ctx.setLineDash([4,6]);ctx.strokeStyle=zoneColors[n];ctx.lineWidth=1;
+    [upper,lower].forEach(v=>{if(v>=minY&&v<=maxY){ctx.beginPath();ctx.moveTo(PAD.left,yOf(v));ctx.lineTo(W-PAD.right,yOf(v));ctx.stroke()}});
+    // Labels
+    ctx.setLineDash([]);ctx.font='9px DM Sans';ctx.fillStyle=zoneColors[n];
+    if(upper<=maxY){ctx.textAlign='left';ctx.fillText(`+${zoneLabels[n]}  ${Math.round(upper)}`,PAD.left+5,yOf(upper)-4)}
+    if(lower>=minY&&lower>0){ctx.textAlign='left';ctx.fillText(`−${zoneLabels[n]}  ${Math.round(lower)}`,PAD.left+5,yOf(lower)-4)}
+  });
+  ctx.setLineDash([]);
+
+  // Avg line
+  ctx.strokeStyle='#f5b731';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(PAD.left,yOf(xm.avgCT));ctx.lineTo(W-PAD.right,yOf(xm.avgCT));ctx.stroke();
+  ctx.fillStyle='#f5b731';ctx.font='bold 10px DM Sans';ctx.textAlign='left';ctx.fillText(`Avg = ${Math.round(xm.avgCT)}`,PAD.left+5,yOf(xm.avgCT)-6);
+
+  // UNPL
+  ctx.setLineDash([6,4]);ctx.strokeStyle='#ff5c5c';ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(PAD.left,yOf(xm.unpl));ctx.lineTo(W-PAD.right,yOf(xm.unpl));ctx.stroke();
+  ctx.fillStyle='#ff5c5c';ctx.font='bold 10px DM Sans';ctx.textAlign='right';ctx.fillText(`UNPL = ${Math.round(xm.unpl)}`,W-PAD.right-5,yOf(xm.unpl)-6);
+
+  // LNPL
+  ctx.strokeStyle='#2dd4a0';ctx.beginPath();ctx.moveTo(PAD.left,yOf(xm.lnpl));ctx.lineTo(W-PAD.right,yOf(xm.lnpl));ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#2dd4a0';ctx.font='bold 10px DM Sans';ctx.textAlign='right';ctx.fillText(`LNPL = ${Math.round(xm.lnpl)}`,W-PAD.right-5,yOf(xm.lnpl)+13);
+
+  // X labels
+  ctx.textAlign='center';const step=Math.max(1,Math.floor(data.length/14));
+  for(let i=0;i<data.length;i+=step){const x=xOf(i);ctx.fillStyle='#4a4f6a';ctx.font='9px DM Sans';ctx.fillText(new Date(data[i].ts).toLocaleDateString('pl-PL',{day:'numeric',month:'short'}),x,H-PAD.bottom+13);ctx.fillText(`#${i+1}`,x,H-PAD.bottom+24)}
+
+  // Line
+  ctx.strokeStyle='rgba(91,127,255,.3)';ctx.lineWidth=1.5;ctx.beginPath();data.forEach((d,i)=>{const x=xOf(i),y=yOf(d.lead_time);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y)});ctx.stroke();
+
+  // Points
+  const pts=[];
+  data.forEach((d,i)=>{
+    const x=xOf(i),y=yOf(d.lead_time),sig=getSignalX(d.lead_time,xm),col=sig?SIG_COL[sig]:'#5b7fff';
+    if(sig==='strong'){const g=ctx.createRadialGradient(x,y,0,x,y,14);g.addColorStop(0,'rgba(255,77,106,.3)');g.addColorStop(1,'rgba(255,77,106,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,14,0,Math.PI*2);ctx.fill()}
+    ctx.beginPath();ctx.arc(x,y,DR,0,Math.PI*2);ctx.fillStyle=col;ctx.fill();ctx.strokeStyle=sig?'rgba(255,255,255,.25)':'rgba(255,255,255,.1)';ctx.lineWidth=sig?1.5:1;ctx.stroke();
+    pts.push({x,y,d,i,sig,mr:i>0?xm.mr[i-1]:null});
+  });
+  xCv._d={pts,xm,W,H};
+}
+
+// X tooltip
+xCv.addEventListener('mousemove',e=>{const r=xCv.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top,cd=xCv._d;if(!cd)return;let h=null,b=99;cd.pts.forEach(p=>{const d=Math.sqrt((p.x-mx)**2+(p.y-my)**2);if(d<18&&d<b){h=p;b=d}});if(h){const sl=h.sig?`<div class="tt-meta" style="color:${SIG_COL[h.sig]}">● ${SIG_LBL[h.sig]} sygnał</div>`:'';xTip.style.display='block';xTip.innerHTML=`<div class="tt-date">#${h.i+1} · ${h.d.date}</div><div class="tt-val" style="color:${h.sig?SIG_COL[h.sig]:'var(--acc)'}">${h.d.lead_time} <span style="font-size:.58rem;color:var(--dim)">dni</span></div><div class="tt-meta"><span class="badge badge-${h.d.size}">${h.d.size}</span></div>${h.mr!==null?`<div class="tt-meta">MR: ${h.mr}</div>`:''}${sl}`;let tx=h.x+12,ty=h.y-50;if(tx+160>cd.W)tx=h.x-165;if(ty<3)ty=h.y+12;xTip.style.left=tx+'px';xTip.style.top=ty+'px';xCv.style.cursor='pointer'}else{xTip.style.display='none';xCv.style.cursor='default'}});
+xCv.addEventListener('mouseleave',()=>{xTip.style.display='none'});
+
+// ════════════════ MR CHART ════════════════
+const mrCv=document.getElementById('mr-chart'),mrTip=document.getElementById('mr-tip');
+function drawMR(){
+  const data=gF(),{ctx,W,H}=initCanvas(mrCv);ctx.clearRect(0,0,W,H);
+  if(data.length<3){emptyMsg(ctx,W,H,'Min. 3 punkty dla MR');mrCv._d=null;return}
+  const xm=calcXmR(data);
+  const PAD={top:26,right:26,bottom:44,left:52};
+  const cw=W-PAD.left-PAD.right,ch=H-PAD.top-PAD.bottom;
+  const maxY=Math.max(xm.url*1.2,Math.max(...xm.mr)*1.1);
+  const xOf=i=>PAD.left+(i/(xm.mr.length-1))*cw;
+  const yOf=v=>PAD.top+ch-(v/maxY)*ch;
+
+  drawGrid(ctx,PAD,W,H,maxY,0);
+  drawZoneBandsMR(ctx,PAD,W,H,maxY,xm.url);
+
+  // Zone dashed lines at 1/3 and 2/3 of URL
+  const mrZoneCol={1:'rgba(52,211,153,.50)',2:'rgba(255,159,67,.50)'};
+  const mrZoneLbl={1:'1/3',2:'2/3'};
+  [1,2].forEach(n=>{
+    const v=n/3*xm.url;
+    ctx.setLineDash([4,6]);ctx.strokeStyle=mrZoneCol[n];ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(PAD.left,yOf(v));ctx.lineTo(W-PAD.right,yOf(v));ctx.stroke();
+    ctx.setLineDash([]);ctx.font='9px DM Sans';ctx.fillStyle=mrZoneCol[n];ctx.textAlign='left';
+    ctx.fillText(`${mrZoneLbl[n]}  ${Math.round(v)}`,PAD.left+5,yOf(v)-4);
+  });
+  ctx.setLineDash([]);
+
+  // Avg MR
+  ctx.strokeStyle='#a78bfa';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(PAD.left,yOf(xm.avgMR));ctx.lineTo(W-PAD.right,yOf(xm.avgMR));ctx.stroke();
+  ctx.fillStyle='#a78bfa';ctx.font='bold 10px DM Sans';ctx.textAlign='left';ctx.fillText(`Avg MR = ${Math.round(xm.avgMR)}`,PAD.left+5,yOf(xm.avgMR)-6);
+
+  // URL
+  ctx.setLineDash([6,4]);ctx.strokeStyle='#ff5c5c';ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(PAD.left,yOf(xm.url));ctx.lineTo(W-PAD.right,yOf(xm.url));ctx.stroke();
+  ctx.fillStyle='#ff5c5c';ctx.font='bold 10px DM Sans';ctx.textAlign='right';ctx.fillText(`URL = ${Math.round(xm.url)}`,W-PAD.right-5,yOf(xm.url)-6);
+
+  // LRL
+  ctx.strokeStyle='#2dd4a0';ctx.beginPath();ctx.moveTo(PAD.left,yOf(0));ctx.lineTo(W-PAD.right,yOf(0));ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#2dd4a0';ctx.font='bold 10px DM Sans';ctx.textAlign='right';ctx.fillText('LRL = 0',W-PAD.right-5,yOf(0)-6);
+
+  // X labels
+  ctx.textAlign='center';const step=Math.max(1,Math.floor(xm.mr.length/14));
+  for(let i=0;i<xm.mr.length;i+=step){const x=xOf(i);ctx.fillStyle='#4a4f6a';ctx.font='9px DM Sans';ctx.fillText(new Date(data[i+1].ts).toLocaleDateString('pl-PL',{day:'numeric',month:'short'}),x,H-PAD.bottom+13);ctx.fillText(`#${i+2}`,x,H-PAD.bottom+24)}
+
+  // Line
+  ctx.strokeStyle='rgba(167,139,250,.3)';ctx.lineWidth=1.5;ctx.beginPath();xm.mr.forEach((v,i)=>{const x=xOf(i),y=yOf(v);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y)});ctx.stroke();
+
+  // Points
+  const pts=[];
+  xm.mr.forEach((v,i)=>{
+    const x=xOf(i),y=yOf(v),sig=getSignalMR(v,xm),col=sig?SIG_COL[sig]:'#a78bfa';
+    if(sig==='strong'){const g=ctx.createRadialGradient(x,y,0,x,y,14);g.addColorStop(0,'rgba(255,77,106,.3)');g.addColorStop(1,'rgba(255,77,106,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,14,0,Math.PI*2);ctx.fill()}
+    ctx.beginPath();ctx.arc(x,y,DR,0,Math.PI*2);ctx.fillStyle=col;ctx.fill();ctx.strokeStyle=sig?'rgba(255,255,255,.25)':'rgba(255,255,255,.1)';ctx.lineWidth=sig?1.5:1;ctx.stroke();
+    pts.push({x,y,v,i:i+1,sig,from:data[i].lead_time,to:data[i+1].lead_time,date:data[i+1].date});
+  });
+  mrCv._d={pts,xm,W,H};
+}
+
+mrCv.addEventListener('mousemove',e=>{const r=mrCv.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top,cd=mrCv._d;if(!cd)return;let h=null,b=99;cd.pts.forEach(p=>{const d=Math.sqrt((p.x-mx)**2+(p.y-my)**2);if(d<18&&d<b){h=p;b=d}});if(h){const sl=h.sig?`<div class="tt-meta" style="color:${SIG_COL[h.sig]}">● ${SIG_LBL[h.sig]} sygnał</div>`:'';mrTip.style.display='block';mrTip.innerHTML=`<div class="tt-date">#${h.i+1} · ${h.date}</div><div class="tt-val" style="color:${h.sig?SIG_COL[h.sig]:'var(--avgmr)'}">${h.v} <span style="font-size:.58rem;color:var(--dim)">dni</span></div><div class="tt-meta">|${h.from} → ${h.to}| = ${h.v}</div>${sl}`;let tx=h.x+12,ty=h.y-50;if(tx+160>cd.W)tx=h.x-165;if(ty<3)ty=h.y+12;mrTip.style.left=tx+'px';mrTip.style.top=ty+'px';mrCv.style.cursor='pointer'}else{mrTip.style.display='none';mrCv.style.cursor='default'}});
+mrCv.addEventListener('mouseleave',()=>{mrTip.style.display='none'});
+
+// ════════════════ SCATTERPLOT ════════════════
+const scCv=document.getElementById('scatter'),scTip=document.getElementById('sc-tip');
+function drawSC(){
+  const data=gF(),{ctx,W,H}=initCanvas(scCv);ctx.clearRect(0,0,W,H);
+  if(!data.length){emptyMsg(ctx,W,H,'Brak danych');scCv._d=null;return}
+  const PAD={top:26,right:26,bottom:44,left:52};
+  const cw=W-PAD.left-PAD.right,ch=H-PAD.top-PAD.bottom;
+  const minT=Math.min(...data.map(d=>d.ts)),maxT=Math.max(...data.map(d=>d.ts)),tR=maxT-minT||1;
+  const maxY=Math.max(...data.map(d=>d.lead_time))*1.12;
+  const xOf=d=>PAD.left+((d.ts-minT)/tR)*cw,yOf=d=>PAD.top+ch-(d.lead_time/maxY)*ch,yV=v=>PAD.top+ch-(v/maxY)*ch;
+
+  drawGrid(ctx,PAD,W,H,maxY,0);
+
+  // X ticks
+  const MN=['Sty','Lut','Mar','Kwi','Maj','Cze','Lip','Sie','Wrz','Paź','Lis','Gru'];
+  let cur=new Date(new Date(minT).getFullYear(),new Date(minT).getMonth(),1);const eD=new Date(maxT);ctx.textAlign='center';
+  while(cur<=eD){const t=cur.getTime();if(t>=minT&&t<=maxT){const x=PAD.left+((t-minT)/tR)*cw;ctx.fillStyle='#4a4f6a';ctx.font='10px DM Sans';ctx.fillText(MN[cur.getMonth()]+(cur.getMonth()===0?" '"+String(cur.getFullYear()).slice(2):''),x,H-PAD.bottom+16);ctx.strokeStyle='rgba(38,43,61,.2)';ctx.beginPath();ctx.moveTo(x,PAD.top);ctx.lineTo(x,PAD.top+ch);ctx.stroke()}cur=new Date(cur.getFullYear(),cur.getMonth()+1,1)}
+
+  // Percentiles
+  const vals=data.map(d=>d.lead_time);
+  [50,85,95].forEach(p=>{const v=pct(vals,p),y=yV(v);ctx.setLineDash(PD[p]);ctx.strokeStyle=PC[p];ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(PAD.left,y);ctx.lineTo(W-PAD.right,y);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle=PC[p];ctx.font='bold 9px DM Sans';ctx.textAlign='right';ctx.fillText(`P${p}=${Math.round(v)}`,W-PAD.right-5,y-5)});
+
+  // Dupes
+  const dk=d=>`${new Date(d.ts).toDateString()}_${d.lead_time}`,cn={};data.forEach(d=>{const k=dk(d);cn[k]=(cn[k]||0)+1});
+  data.forEach(d=>{const x=xOf(d),y=yOf(d),n=cn[dk(d)],r=n>1?DR+Math.min(n*2,7):DR;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fillStyle=COL[d.size];ctx.globalAlpha=.88;ctx.fill();ctx.globalAlpha=1;ctx.strokeStyle='rgba(255,255,255,.1)';ctx.lineWidth=1;ctx.stroke();if(n>1){ctx.fillStyle='rgba(255,255,255,.9)';ctx.font='bold 8px DM Sans';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(n,x,y);ctx.textBaseline='alphabetic'}});
+  scCv._d={data,xOf,yOf,p50:pct(vals,50),p85:pct(vals,85),p95:pct(vals,95),W,H,dk,cn};
+}
+
+scCv.addEventListener('mousemove',e=>{const r=scCv.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top,cd=scCv._d;if(!cd)return;let h=null,b=99;cd.data.forEach(d=>{const dx=cd.xOf(d)-mx,dy=cd.yOf(d)-my,dist=Math.sqrt(dx*dx+dy*dy);if(dist<20&&dist<b){h=d;b=dist}});if(h){const z=h.lead_time>cd.p95?'<span style="color:var(--p95)">▲>P95</span>':h.lead_time>cd.p85?'<span style="color:var(--p85)">▲>P85</span>':h.lead_time>cd.p50?'P50–P85':'<span style="color:var(--s)">≤P50</span>';scTip.style.display='block';scTip.innerHTML=`<div class="tt-date">${h.date}</div><div class="tt-val" style="color:${COL[h.size]}">${h.lead_time}</div><div class="tt-meta"><span class="badge badge-${h.size}">${h.size}</span> ${z}</div>`;let tx=cd.xOf(h)+12,ty=cd.yOf(h)-45;if(tx+155>cd.W)tx=cd.xOf(h)-160;if(ty<3)ty=cd.yOf(h)+12;scTip.style.left=tx+'px';scTip.style.top=ty+'px';scCv.style.cursor='pointer'}else{scTip.style.display='none';scCv.style.cursor='default'}});
+scCv.addEventListener('mouseleave',()=>{scTip.style.display='none'});
+
+// ════════════════ REFRESH ════════════════
+function refresh(){renderKPIs();renderFilters();drawX();drawMR();drawSC();renderDRKPIs();drawDRX();drawDRMR();if(openP.has('table-panel'))renderTable();if(openP.has('forecast-panel'))renderForecast();if(openP.has('signals-panel'))renderSignals();if(openP.has('dr-signals-panel'))renderDRSignals()}
+refresh();
+window.addEventListener('resize',()=>{drawX();drawMR();drawSC();drawDRX();drawDRMR()});
+
+// ════════════════ THROUGHPUT DATA ════════════════
+const DR_RAW=[{"date":"2025-01-07","val":0},{"date":"2025-01-08","val":2},{"date":"2025-01-09","val":10},{"date":"2025-01-10","val":3},{"date":"2025-01-11","val":0},{"date":"2025-01-12","val":0},{"date":"2025-01-13","val":2},{"date":"2025-01-14","val":3},{"date":"2025-01-15","val":7},{"date":"2025-01-16","val":0},{"date":"2025-01-17","val":0},{"date":"2025-01-18","val":0},{"date":"2025-01-19","val":0},{"date":"2025-01-20","val":5},{"date":"2025-01-21","val":2},{"date":"2025-01-22","val":0},{"date":"2025-01-23","val":0},{"date":"2025-01-24","val":0},{"date":"2025-01-25","val":0},{"date":"2025-01-26","val":0},{"date":"2025-01-27","val":1},{"date":"2025-01-28","val":1},{"date":"2025-01-29","val":0},{"date":"2025-01-30","val":5},{"date":"2025-01-31","val":4},{"date":"2025-02-01","val":0},{"date":"2025-02-02","val":0},{"date":"2025-02-03","val":7},{"date":"2025-02-04","val":0},{"date":"2025-02-05","val":2},{"date":"2025-02-06","val":2},{"date":"2025-02-07","val":12},{"date":"2025-02-08","val":0},{"date":"2025-02-09","val":0},{"date":"2025-02-10","val":1},{"date":"2025-02-11","val":0},{"date":"2025-02-12","val":0},{"date":"2025-02-13","val":2},{"date":"2025-02-14","val":12},{"date":"2025-02-15","val":0},{"date":"2025-02-16","val":0},{"date":"2025-02-17","val":1},{"date":"2025-02-18","val":0},{"date":"2025-02-19","val":0},{"date":"2025-02-20","val":3},{"date":"2025-02-21","val":11},{"date":"2025-02-22","val":0},{"date":"2025-02-23","val":0},{"date":"2025-02-24","val":6},{"date":"2025-02-25","val":0},{"date":"2025-02-26","val":0},{"date":"2025-02-27","val":6},{"date":"2025-02-28","val":7},{"date":"2025-03-01","val":0},{"date":"2025-03-02","val":0},{"date":"2025-03-03","val":2},{"date":"2025-03-04","val":0},{"date":"2025-03-05","val":0},{"date":"2025-03-06","val":3},{"date":"2025-03-07","val":5},{"date":"2025-03-08","val":0},{"date":"2025-03-09","val":0},{"date":"2025-03-10","val":1},{"date":"2025-03-11","val":0},{"date":"2025-03-12","val":0},{"date":"2025-03-13","val":9},{"date":"2025-03-14","val":7},{"date":"2025-03-15","val":0},{"date":"2025-03-16","val":0},{"date":"2025-03-17","val":3},{"date":"2025-03-18","val":0},{"date":"2025-03-19","val":0},{"date":"2025-03-20","val":4},{"date":"2025-03-21","val":10},{"date":"2025-03-22","val":0},{"date":"2025-03-23","val":0},{"date":"2025-03-24","val":1},{"date":"2025-03-25","val":0},{"date":"2025-03-26","val":0},{"date":"2025-03-27","val":5},{"date":"2025-03-28","val":1},{"date":"2025-03-29","val":0},{"date":"2025-03-30","val":0},{"date":"2025-03-31","val":2},{"date":"2025-04-01","val":0},{"date":"2025-04-02","val":0},{"date":"2025-04-03","val":2},{"date":"2025-04-04","val":11},{"date":"2025-04-05","val":0},{"date":"2025-04-06","val":0},{"date":"2025-04-07","val":1},{"date":"2025-04-08","val":0},{"date":"2025-04-09","val":0},{"date":"2025-04-10","val":5},{"date":"2025-04-11","val":2},{"date":"2025-04-12","val":0},{"date":"2025-04-13","val":0},{"date":"2025-04-14","val":1},{"date":"2025-04-15","val":0},{"date":"2025-04-16","val":0},{"date":"2025-04-17","val":4},{"date":"2025-04-18","val":7},{"date":"2025-04-19","val":0}];
+
+const DR_DATA=DR_RAW.map(d=>({...d,ts:new Date(d.date).getTime()}));
+
+function calcDRXmR(){
+  const v=DR_DATA.map(d=>d.val);
+  const mr=[];for(let i=1;i<v.length;i++)mr.push(Math.abs(v[i]-v[i-1]));
+  const avgDR=v.reduce((a,b)=>a+b,0)/v.length;
+  const avgMR=mr.reduce((a,b)=>a+b,0)/mr.length;
+  return{avgDR,avgMR,unpl:avgDR+2.66*avgMR,lnpl:Math.max(0,avgDR-2.66*avgMR),url:3.27*avgMR,lrl:0,mr,vals:v};
+}
+
+function getDRSignalX(val,xm){
+  const band=xm.unpl-xm.avgDR;
+  const third=band/3;
+  const dev=val-xm.avgDR;
+  const absDev=Math.abs(dev);
+  if(val>xm.unpl||val<xm.lnpl)return'strong';
+  if(absDev>2*third)return'moderate';
+  if(absDev>third)return'weak';
+  return null;
+}
+function getDRSignalMR(val,xm){
+  const third=xm.url/3;
+  if(val>xm.url)return'strong';
+  if(val>2*third)return'moderate';
+  if(val>third)return'weak';
+  return null;
+}
+
+const DR_SIG_ICO={strong:'❗',moderate:'❓',weak:'💡'};
+
+// DR KPIs
+function renderDRKPIs(){
+  const xm=calcDRXmR();
+  const kp=[
+    {l:'Punktów',v:DR_DATA.length,u:'dni',c:'var(--dr)'},
+    {l:'Avg DR',v:xm.avgDR.toFixed(2),u:'szt/dzień',c:'var(--dr-avg)'},
+    {l:'Avg MR',v:xm.avgMR.toFixed(2),u:'',c:'var(--dr-mr)'},
+    {l:'UNPL',v:xm.unpl.toFixed(1),u:'',c:'var(--unpl)'},
+    {l:'LNPL',v:xm.lnpl.toFixed(1),u:'',c:'var(--lnpl)'},
+    {l:'URL',v:xm.url.toFixed(1),u:'',c:'var(--url-c)'},
+  ];
+  document.getElementById('dr-kpis').innerHTML=kp.map(k=>`<div class="kpi"><div class="kpi-label">${k.l}</div><div class="kpi-val" style="color:${k.c}">${k.v}</div><div class="kpi-unit">${k.u}</div></div>`).join('');
+}
+
+// DR Signals
+function renderDRSignals(){
+  const xm=calcDRXmR();
+  const xSigs=[],mrSigs=[];
+  DR_DATA.forEach((d,i)=>{const s=getDRSignalX(d.val,xm);if(s)xSigs.push({i:i+1,date:d.date,val:d.val,sig:s})});
+  xm.mr.forEach((v,i)=>{const s=getDRSignalMR(v,xm);if(s)mrSigs.push({i:i+2,date:DR_DATA[i+1].date,val:v,sig:s})});
+
+  const renderList=(arr)=>{
+    if(!arr.length)return'<div class="sig-empty">Brak sygnałów — proces stabilny</div>';
+    return arr.sort((a,b)=>{const o={strong:0,moderate:1,weak:2};return o[a.sig]-o[b.sig]}).map(s=>
+      `<div class="sig-item"><div class="sig-icon ${SIG_CLS[s.sig]}">${DR_SIG_ICO[s.sig]}</div><div><strong>#${s.i}</strong> ${s.date}<br><span class="sig-label">${SIG_LBL[s.sig]} sygnał</span></div><div class="sig-val" style="color:${SIG_COL[s.sig]}">${s.val}</div></div>`
+    ).join('');
+  };
+  document.getElementById('sig-dr-x').innerHTML=renderList(xSigs);
+  document.getElementById('sig-dr-mr').innerHTML=renderList(mrSigs);
+}
+
+// ════════════════ DR X CHART ════════════════
+const drXCv=document.getElementById('dr-x-chart'),drXTip=document.getElementById('dr-x-tip');
+function drawDRX(){
+  const{ctx,W,H}=initCanvas(drXCv);ctx.clearRect(0,0,W,H);
+  const xm=calcDRXmR();
+  const PAD={top:26,right:26,bottom:44,left:52};
+  const cw=W-PAD.left-PAD.right,ch=H-PAD.top-PAD.bottom;
+  const maxY=Math.max(xm.unpl*1.2,Math.max(...xm.vals)*1.1);
+  const xOf=i=>PAD.left+(i/(DR_DATA.length-1))*cw;
+  const yOf=v=>PAD.top+ch-(v/maxY)*ch;
+
+  drawGrid(ctx,PAD,W,H,maxY,0);
+  drawZoneBands(ctx,PAD,W,H,maxY,0,xm.avgDR,xm.unpl,true);
+  if(xm.lnpl>0)drawZoneBands(ctx,PAD,W,H,maxY,0,xm.avgDR,xm.lnpl,false);
+
+  // 1/3 and 2/3 zone lines
+  const band=xm.unpl-xm.avgDR;
+  const zC={1:'rgba(52,211,153,.50)',2:'rgba(255,159,67,.50)'};
+  [1,2].forEach(n=>{
+    const f=n/3,upper=xm.avgDR+f*band,lower=Math.max(0,xm.avgDR-f*band);
+    ctx.setLineDash([4,6]);ctx.strokeStyle=zC[n];ctx.lineWidth=1;
+    [upper,lower].forEach(v=>{if(v>=0&&v<=maxY){ctx.beginPath();ctx.moveTo(PAD.left,yOf(v));ctx.lineTo(W-PAD.right,yOf(v));ctx.stroke()}});
+    ctx.setLineDash([]);ctx.font='9px DM Sans';ctx.fillStyle=zC[n];
+    if(upper<=maxY){ctx.textAlign='left';ctx.fillText(`+${n}/3  ${upper.toFixed(1)}`,PAD.left+5,yOf(upper)-4)}
+    if(lower>0){ctx.textAlign='left';ctx.fillText(`−${n}/3  ${lower.toFixed(1)}`,PAD.left+5,yOf(lower)-4)}
+  });
+  ctx.setLineDash([]);
+
+  // Avg DR
+  ctx.strokeStyle='#38bdf8';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(PAD.left,yOf(xm.avgDR));ctx.lineTo(W-PAD.right,yOf(xm.avgDR));ctx.stroke();
+  ctx.fillStyle='#38bdf8';ctx.font='bold 10px DM Sans';ctx.textAlign='left';ctx.fillText(`Avg = ${xm.avgDR.toFixed(2)}`,PAD.left+5,yOf(xm.avgDR)-6);
+
+  // UNPL
+  ctx.setLineDash([6,4]);ctx.strokeStyle='#ff5c5c';ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(PAD.left,yOf(xm.unpl));ctx.lineTo(W-PAD.right,yOf(xm.unpl));ctx.stroke();
+  ctx.fillStyle='#ff5c5c';ctx.font='bold 10px DM Sans';ctx.textAlign='right';ctx.fillText(`UNPL = ${xm.unpl.toFixed(1)}`,W-PAD.right-5,yOf(xm.unpl)-6);
+
+  // LNPL
+  ctx.strokeStyle='#2dd4a0';ctx.beginPath();ctx.moveTo(PAD.left,yOf(xm.lnpl));ctx.lineTo(W-PAD.right,yOf(xm.lnpl));ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#2dd4a0';ctx.font='bold 10px DM Sans';ctx.textAlign='right';ctx.fillText(`LNPL = ${xm.lnpl.toFixed(1)}`,W-PAD.right-5,yOf(xm.lnpl)+13);
+
+  // X labels
+  ctx.textAlign='center';const step=Math.max(1,Math.floor(DR_DATA.length/16));
+  for(let i=0;i<DR_DATA.length;i+=step){const x=xOf(i);ctx.fillStyle='#4a4f6a';ctx.font='9px DM Sans';ctx.fillText(new Date(DR_DATA[i].ts).toLocaleDateString('pl-PL',{day:'numeric',month:'short'}),x,H-PAD.bottom+14)}
+
+  // Line
+  ctx.strokeStyle='rgba(56,189,248,.3)';ctx.lineWidth=1.5;ctx.beginPath();DR_DATA.forEach((d,i)=>{const x=xOf(i),y=yOf(d.val);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y)});ctx.stroke();
+
+  // Points
+  const pts=[];
+  DR_DATA.forEach((d,i)=>{
+    const x=xOf(i),y=yOf(d.val),sig=getDRSignalX(d.val,xm),col=sig?SIG_COL[sig]:'#38bdf8';
+    if(sig==='strong'){const g=ctx.createRadialGradient(x,y,0,x,y,14);g.addColorStop(0,'rgba(255,77,106,.3)');g.addColorStop(1,'rgba(255,77,106,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,14,0,Math.PI*2);ctx.fill()}
+    ctx.beginPath();ctx.arc(x,y,DR,0,Math.PI*2);ctx.fillStyle=col;ctx.fill();ctx.strokeStyle=sig?'rgba(255,255,255,.25)':'rgba(255,255,255,.1)';ctx.lineWidth=sig?1.5:1;ctx.stroke();
+    // Signal icon
+    if(sig){ctx.font='10px sans-serif';ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText(DR_SIG_ICO[sig],x,y-7);ctx.textBaseline='alphabetic'}
+    pts.push({x,y,d,i,sig,mr:i>0?xm.mr[i-1]:null});
+  });
+  drXCv._d={pts,xm,W,H};
+}
+
+drXCv.addEventListener('mousemove',e=>{const r=drXCv.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top,cd=drXCv._d;if(!cd)return;let h=null,b=99;cd.pts.forEach(p=>{const d=Math.sqrt((p.x-mx)**2+(p.y-my)**2);if(d<20&&d<b){h=p;b=d}});if(h){const sl=h.sig?`<div class="tt-meta" style="color:${SIG_COL[h.sig]}">${DR_SIG_ICO[h.sig]} ${SIG_LBL[h.sig]} sygnał</div>`:'';drXTip.style.display='block';drXTip.innerHTML=`<div class="tt-date">#${h.i+1} · ${h.d.date}</div><div class="tt-val" style="color:${h.sig?SIG_COL[h.sig]:'var(--dr)'}">${h.d.val} <span style="font-size:.58rem;color:var(--dim)">szt</span></div>${h.mr!==null?`<div class="tt-meta">MR: ${h.mr}</div>`:''}${sl}`;let tx=h.x+12,ty=h.y-55;if(tx+160>cd.W)tx=h.x-165;if(ty<3)ty=h.y+12;drXTip.style.left=tx+'px';drXTip.style.top=ty+'px';drXCv.style.cursor='pointer'}else{drXTip.style.display='none';drXCv.style.cursor='default'}});
+drXCv.addEventListener('mouseleave',()=>{drXTip.style.display='none'});
+
+// ════════════════ DR MR CHART ════════════════
+const drMrCv=document.getElementById('dr-mr-chart'),drMrTip=document.getElementById('dr-mr-tip');
+function drawDRMR(){
+  const{ctx,W,H}=initCanvas(drMrCv);ctx.clearRect(0,0,W,H);
+  const xm=calcDRXmR();
+  if(xm.mr.length<2){emptyMsg(ctx,W,H,'Min. 3 punkty');drMrCv._d=null;return}
+  const PAD={top:26,right:26,bottom:44,left:52};
+  const cw=W-PAD.left-PAD.right,ch=H-PAD.top-PAD.bottom;
+  const maxY=Math.max(xm.url*1.2,Math.max(...xm.mr)*1.1);
+  const xOf=i=>PAD.left+(i/(xm.mr.length-1))*cw;
+  const yOf=v=>PAD.top+ch-(v/maxY)*ch;
+
+  drawGrid(ctx,PAD,W,H,maxY,0);
+  drawZoneBandsMR(ctx,PAD,W,H,maxY,xm.url);
+
+  // 1/3 2/3 lines
+  const zC={1:'rgba(52,211,153,.50)',2:'rgba(255,159,67,.50)'};
+  [1,2].forEach(n=>{
+    const v=n/3*xm.url;
+    ctx.setLineDash([4,6]);ctx.strokeStyle=zC[n];ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(PAD.left,yOf(v));ctx.lineTo(W-PAD.right,yOf(v));ctx.stroke();
+    ctx.setLineDash([]);ctx.font='9px DM Sans';ctx.fillStyle=zC[n];ctx.textAlign='left';
+    ctx.fillText(`${n}/3  ${v.toFixed(1)}`,PAD.left+5,yOf(v)-4);
+  });
+  ctx.setLineDash([]);
+
+  // Avg MR
+  ctx.strokeStyle='#c084fc';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(PAD.left,yOf(xm.avgMR));ctx.lineTo(W-PAD.right,yOf(xm.avgMR));ctx.stroke();
+  ctx.fillStyle='#c084fc';ctx.font='bold 10px DM Sans';ctx.textAlign='left';ctx.fillText(`Avg MR = ${xm.avgMR.toFixed(2)}`,PAD.left+5,yOf(xm.avgMR)-6);
+
+  // URL
+  ctx.setLineDash([6,4]);ctx.strokeStyle='#ff5c5c';ctx.lineWidth=1.6;ctx.beginPath();ctx.moveTo(PAD.left,yOf(xm.url));ctx.lineTo(W-PAD.right,yOf(xm.url));ctx.stroke();
+  ctx.fillStyle='#ff5c5c';ctx.font='bold 10px DM Sans';ctx.textAlign='right';ctx.fillText(`URL = ${xm.url.toFixed(1)}`,W-PAD.right-5,yOf(xm.url)-6);
+
+  // LRL
+  ctx.strokeStyle='#2dd4a0';ctx.beginPath();ctx.moveTo(PAD.left,yOf(0));ctx.lineTo(W-PAD.right,yOf(0));ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#2dd4a0';ctx.font='bold 10px DM Sans';ctx.textAlign='right';ctx.fillText('LRL = 0',W-PAD.right-5,yOf(0)-6);
+
+  // X labels
+  ctx.textAlign='center';const step=Math.max(1,Math.floor(xm.mr.length/16));
+  for(let i=0;i<xm.mr.length;i+=step){const x=xOf(i);ctx.fillStyle='#4a4f6a';ctx.font='9px DM Sans';ctx.fillText(new Date(DR_DATA[i+1].ts).toLocaleDateString('pl-PL',{day:'numeric',month:'short'}),x,H-PAD.bottom+14)}
+
+  // Line
+  ctx.strokeStyle='rgba(192,132,252,.3)';ctx.lineWidth=1.5;ctx.beginPath();xm.mr.forEach((v,i)=>{const x=xOf(i),y=yOf(v);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y)});ctx.stroke();
+
+  // Points
+  const pts=[];
+  xm.mr.forEach((v,i)=>{
+    const x=xOf(i),y=yOf(v),sig=getDRSignalMR(v,xm),col=sig?SIG_COL[sig]:'#c084fc';
+    if(sig==='strong'){const g=ctx.createRadialGradient(x,y,0,x,y,14);g.addColorStop(0,'rgba(255,77,106,.3)');g.addColorStop(1,'rgba(255,77,106,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(x,y,14,0,Math.PI*2);ctx.fill()}
+    ctx.beginPath();ctx.arc(x,y,DR,0,Math.PI*2);ctx.fillStyle=col;ctx.fill();ctx.strokeStyle=sig?'rgba(255,255,255,.25)':'rgba(255,255,255,.1)';ctx.lineWidth=sig?1.5:1;ctx.stroke();
+    if(sig){ctx.font='10px sans-serif';ctx.textAlign='center';ctx.textBaseline='bottom';ctx.fillText(DR_SIG_ICO[sig],x,y-7);ctx.textBaseline='alphabetic'}
+    pts.push({x,y,v,i:i+1,sig,from:DR_DATA[i].val,to:DR_DATA[i+1].val,date:DR_DATA[i+1].date});
+  });
+  drMrCv._d={pts,xm,W,H};
+}
+
+drMrCv.addEventListener('mousemove',e=>{const r=drMrCv.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top,cd=drMrCv._d;if(!cd)return;let h=null,b=99;cd.pts.forEach(p=>{const d=Math.sqrt((p.x-mx)**2+(p.y-my)**2);if(d<18&&d<b){h=p;b=d}});if(h){const sl=h.sig?`<div class="tt-meta" style="color:${SIG_COL[h.sig]}">${DR_SIG_ICO[h.sig]} ${SIG_LBL[h.sig]} sygnał</div>`:'';drMrTip.style.display='block';drMrTip.innerHTML=`<div class="tt-date">#${h.i+1} · ${h.date}</div><div class="tt-val" style="color:${h.sig?SIG_COL[h.sig]:'var(--dr-mr)'}">${h.v} <span style="font-size:.58rem;color:var(--dim)">Δ</span></div><div class="tt-meta">|${h.from} → ${h.to}| = ${h.v}</div>${sl}`;let tx=h.x+12,ty=h.y-55;if(tx+160>cd.W)tx=h.x-165;if(ty<3)ty=h.y+12;drMrTip.style.left=tx+'px';drMrTip.style.top=ty+'px';drMrCv.style.cursor='pointer'}else{drMrTip.style.display='none';drMrCv.style.cursor='default'}});
+drMrCv.addEventListener('mouseleave',()=>{drMrTip.style.display='none'});
+</script>
+</body>
+</html>
